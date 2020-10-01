@@ -1,0 +1,17 @@
+{% macro sidebar(page_title) %}
+    <div class="position-fixed d-flex flex-column justify-content-start align-items-center p-0">
+        <div class="card p-5 border box-shadow vh-100 white">
+            <div class="d-flex flex-column align-items-center">
+                <img src="{{ url_for('static', filename='assets/ictc-name.svg') }}">
+            </div>
+            <div class="mt-5 d-flex flex-column">
+                <a href="{{ url_for('dashboard') }}" class="text-{%if page_title == 'Dashboard'%}primary{%else%}secondary{%endif%} font-weight-bold d-flex flex-row align-items-center" role="button">
+                    <span class="badge badge-{%if page_title == 'Dashboard'%}primary{%else%}secondary{%endif%}"><img src="{{ url_for('static', filename='assets/dashboard.svg') }}" style="width:15px;height:15px;"></span>&nbsp;&nbsp;Dashboard
+                </a>
+                <a href="{{ url_for('requests') }}" class="text-{%if page_title == 'Requests'%}primary{%else%}secondary{%endif%} font-weight-bold d-flex flex-row align-items-center mt-3" role="button">
+                    <span class="badge badge-{%if page_title == 'Requests'%}primary{%else%}secondary{%endif%}"><img src="{{ url_for('static', filename='assets/request-light.svg') }}" style="width:15px;height:15px;"></span>&nbsp;&nbsp;Requests
+                </a>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

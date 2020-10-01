@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="db-tb container-fluid rounded position-fixed box-shadow d-flex justify-content-between px-0">
+        <span class="p-3 font-weight-bold">
+            Dashboard
+        </span>
+    </div>
+    <div class="db-tc-dvd"></div>
+    <div class="db-cc-fi card position-relative bg-light box-shadow d-flex flex-row justify-content-between align-items-center white">
+        <div class="container-fluid my-2 d-flex flex-column align-items-center">
+            <div class="card container-fluid p-0 bg-dark text-white">
+                <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
+                <div class="card-img-overlay">
+                    <h3 class="card-title">September 8, 2020</h3>
+                    <p class="card-text">Date today</p>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid my-2 d-flex flex-column align-items-center">
+            <div class="card container-fluid p-0 bg-dark text-white">
+                <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
+                <div class="card-img-overlay">
+                    <h3 class="card-title">130</h3>
+                    <p class="card-text">Total requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid my-2 d-flex flex-column align-items-center">
+            <div class="card container-fluid p-0 bg-dark text-white">
+                <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
+                <div class="card-img-overlay">
+                    <h3 class="card-title">10</h3>
+                    <p class="card-text">Total technicians</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="db-cc-cs position-relative row no-gutters">
+        <div class="col-8">
+            <div class="cs-pst card bg-light mt-2 box-shadow">
+                <div class="card-body">
+                    <div class="card-title mt-3 mx-3 d-flex align-items-center justify-content-between">
+                        <h3 class="font-weight-bold">
+                            Performed services over the months
+                        </h3>
+                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                            By year
+                        </button>
+                    </div>
+                    <div class="cs-dvd"></div>
+                    <div class="cs-pst-d ct-chart ct-minor-seventh"></div>
+                </div>
+            </div>
+            <div class="cs-sro card bg-light mt-2 col box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title mt-3 ml-3 font-weight-bold">Service requests per office</h5>
+                    <div class="cs-dvd"></div>
+                    <div class="cs-sro-d ct-chart ct-octave"></div>
+                </div>
+            </div>
+            <div class="cs-tsp card bg-light mt-2 col box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title mt-3 ml-3 font-weight-bold">Technicians and the services they have performed</h5>
+                    <div class="cs-dvd"></div>
+                    <div class="cs-tsp-d ct-chart ct-octave"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex flex-column">
+            <div class="cs-rs card ml-2 mt-2 bg-light box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title mt-3 ml-3 ml-5 font-weight-bold">Rating summary</h5>
+                    <div class="cs-dvd"></div>
+                    <div class="cs-rs-d ct-chart ct-perfect-fourth"></div>
+                </div>
+            </div>
+            <div class="cs-mrsn card ml-2 mt-2 bg-light box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">Most requested service nature</h5>
+                    <p class="card-text">
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt delectus tempore, iste error eveniet rerum deleniti doloremque voluptate nostrum illum sequi sit cumque eaque quaerat quibusdam at excepturi optio explicabo ex assumenda omnis eum officia enim laboriosam! Quam a omnis ab dolorem quaerat veritatis, in doloremque eius rem pariatur iste illo dicta autem. Eum accusamus qui nam maxime est error dolorem dignissimos incidunt, ad sit fugiat odio sed dicta modi, dolore id unde nobis atque facere sequi corrupti sunt neque! Repudiandae reiciendis omnis expedita, quos ducimus tempora ipsum natus. Culpa dolorem minima corrupti quod possimus est corporis voluptate quam aperiam!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
