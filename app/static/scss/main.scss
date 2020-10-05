@@ -5,6 +5,10 @@ body {
     background: lavender;
 }
 
+textarea {
+    resize: none;
+}
+
 // MAINFRAME SIDEBAR
 #ictc-st-mf > .row > .mf-sb > .position-fixed {
     z-index: 10;
@@ -37,9 +41,12 @@ body {
 }
 
 // REQUESTS
-
 #ictc-st-mf > .row > .mf-cc > .rq-tb > .rq-tb-aa > .dropdown > .list-group-item-action:hover {
     cursor: pointer;
+}
+
+#ictc-st-mf > .row > .mf-cc > .rq-lg > #rq-lg-i {
+    display: none !important;
 }
 
 #ictc-st-mf > .row > .mf-cc > .rq-lg > .list-group-item:hover {
@@ -64,6 +71,12 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+#ictc-st-mf > .row > .mf-cc > .rq-lg > .list-group-item:active .rq-li-de > span {
+    width: 100px;
+    word-wrap: break-word;
+}
+
 
 // DASHBOARD
 #ictc-st-mf > .row > .mf-cc > .db-tc-dvd {
@@ -104,29 +117,49 @@ body {
 }
 
 // COMPONENTS
+.alert-frame {
+    z-index: 2;
+    width: 350px !important;
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+}
+
 .frcr-cnt {
     position:fixed;
-    width:50px;
-    height:50px;
-    bottom:30px;
-    right:17.5px;
-    background-color:#007bff;
-    border-radius:50%;
-    z-index:1000;
+    width: 50px;
+    height: 50px;
+    bottom: 30px;
+    right: 17.5px;
+    background-color: #007bff;
+    border-radius: 50%;
+    z-index: 1000;
 }
 
 .frcr-cnt > .frcr-btn {
-    position:relative;
-    width:50px;
+    position: relative;
+    width: 50px;
     margin: 0 auto;
-	animation:rotate-in 0.5s;
+	animation: rotate-in 0.5s;
 }
 
 .frcr-cnt:active .frcr-btn {
-	animation:rotate-out 0.5s;
+	animation: rotate-out 0.5s;
 }
 
-.drop-zone {
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .fg-md {
+    height: 80px;
+}
+
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .fg-lg {
+    height: 100px;
+}
+
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .fg-xlg {
+    height: 130px;
+}
+
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .crt-rq-pf > .drop-zone {
     height: 200px;
     padding: 25px;
     display: flex;
@@ -138,37 +171,32 @@ body {
     font-size: 20px;
     cursor: pointer;
     background-color: lightgray;
+    background-size: cover;             
+    background-repeat:  no-repeat;
+    background-position: center center;
 }
 
-.drop-zone--over {
-    border-style: solid;
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .crt-rq-pf > .drop-zone > input {
+    opacity: 0;
+    left: 236px;
+    width: 10px;
 }
 
-.drop-zone__input {
-    display: none;
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .crt-rq-pf > .drop-zone--over {
+    border: 2px solid gray;
+}
+
+#crt-rq-mdl > .modal-dialog > .modal-content > .modal-body > .crt-rq-pf > .drop-zone > .drop-zone__prompt > img {
+    width: 30px;
 }
 
 .drop-zone__thumb {
     width: 100%;
     height: 100%;
     border-radius: 10px;
-    overflow: hidden;
-    background-color: #cccccc;
-    background-size: cover;
-    position: relative;
-}
-
-.drop-zone__thumb::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 5px 0;
-    color: #ffffff;
-    background: rgba(0, 0, 0, 0.75);
-    font-size: 14px;
-    text-align: center;
+    background-size: cover;             
+    background-repeat:  no-repeat;
+    background-position: center center;
 }
 
 .box-shadow {
@@ -221,18 +249,18 @@ body {
 // ANIMATION
 @keyframes rotate-in {
     from {
-        transform:rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-        transform:rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
 @keyframes rotate-out {
     from {
-        transform:rotate(360deg);
+        transform: rotate(360deg);
     }
     to {
-        transform:rotate(0deg);
+        transform: rotate(0deg);
     }
 }
