@@ -102,73 +102,158 @@ document.querySelectorAll(".rq-lg").forEach((listGroup) => {
         url: "/api/request/",
 
         success: function (response) {
-            for (let request of response["requests"]) {
-                let baseItem = listGroup.querySelector("#rq-lg-i");  
-
-                let item = $(baseItem).clone().removeAttr("id").removeClass("d-none");
-
-                item.find(".rq-li-no").html("<span>" + request["no"] + "</span>");
-
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                let date = new Date(request["date"]);
-                item.find(".rq-li-da").html("<span>" + monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "</span>");
-
-                item.find(".rq-li-o").html("<span>" + request["office"]["name"] + "</span>");
-                item.find(".rq-li-mo").html("<span>" + request["mode"]["name"] + "</span>");
-                item.find(".rq-li-na").html("<span>" + request["nature"]["name"] + "</span>");
-                item.find(".rq-li-de").html("<span>" + request["detail"] + "</span>");
-                
-                var technicians = "<span>";
-                for (let technician of request["technicians"]) {
-                    technicians += technician["name"] + "<br>";
-                }
-                technicians += "</span>";
-                item.find(".rq-li-t").html(technicians);
-
-                let resultBadge = document.createElement("div");
-                resultBadge.classList.add("badge", "py-1");
-                resultBadge.style.width = "60px";
-                if (request["result"] === 0) {
-                    resultBadge.classList.add("badge-success");
-                    resultBadge.innerHTML = "Done";
-                } else if (request["result"] === 1) {
-                    resultBadge.classList.add("badge-warning");
-                    resultBadge.innerHTML = "Pending";
-                } else if (request["result"] === 2) {
-                    resultBadge.classList.add("badge-danger");
-                    resultBadge.innerHTML = "Cancelled";
-                }
-                item.find(".rq-li-re").html(resultBadge);
-
-                let ratingBadge = document.createElement("div");
-                ratingBadge.classList.add("badge", "py-1");
-                ratingBadge.style.width = "60px";
-                if (request["rating"] === 0) {
-                    ratingBadge.classList.add("badge-success");
-                    ratingBadge.innerHTML = "Excellent";
-                } else if (request["rating"] === 1) {
-                    ratingBadge.classList.add("badge-success");
-                    ratingBadge.innerHTML = "Very good";
-                } else if (request["rating"] === 2) {
-                    ratingBadge.classList.add("badge-success");
-                    ratingBadge.innerHTML = "Good";
-                } else if (request["rating"] === 3) {
-                    ratingBadge.classList.add("badge-secondary");
-                    ratingBadge.innerHTML = "Fair";
-                } else if (request["rating"] === 4) {
-                    ratingBadge.classList.add("badge-danger");
-                    ratingBadge.innerHTML = "Poor";
-                }
-                item.find(".rq-li-ra").html(ratingBadge);
-
-                item.appendTo(listGroup);
-            }
+            populateRequestList(listGroup, response);
         }
     });
 });
 
 document.querySelectorAll(".rq-tb-aa").forEach((container) => {
+    container.querySelectorAll(".rq-tb-da").forEach((dateCont) => {
+
+
+        const listGroup = document.querySelector(".rq-lg");
+        const yearSelect = dateCont.querySelector(".tb-da-y").querySelector("select");
+        const monthSelect = dateCont.querySelector(".tb-da-m").querySelector("select");
+
+        var newestRequestYear;
+        var oldestRequestYear;
+
+        $.ajax({
+            type: "GET",
+
+            url:  "/api/request/newest",
+    
+            success: function (request) {
+                let date = new Date(request["date"]);
+
+                OldestRequestAjaxCall(date.getFullYear());
+            }
+        });
+
+        function OldestRequestAjaxCall(newestRequestYear) {
+            $.ajax({
+                type: "GET",
+        
+                url:  "/api/request/oldest",
+        
+                success: function (request) {
+                    let date = new Date(request["date"]);
+
+                    oldestRequestYear = date.getFullYear();
+
+                    let inbetweenYearCount = oldestRequestYear - newestRequestYear;
+                    
+                    
+                    while (inbetweenYearCount >= 0) {
+                        let yearOption = document.createElement("option");
+                        
+                        yearOption.innerHTML = (newestRequestYear + inbetweenYearCount).toString();
+                        
+                        yearSelect.append(yearOption)
+                        
+                        inbetweenYearCount--;
+                    }
+                }
+            });
+        }
+
+        const filter = dateCont.querySelector("a");
+
+        filter.addEventListener("click", (e) => {
+            while (listGroup.lastChild.id !== "rq-lg-i") {
+                listGroup.removeChild(listGroup.lastChild);
+            }
+            
+            var urlString = "/api/request/year/" + yearSelect.value;
+
+            if (monthSelect.value != "0") {
+                urlString += "/month/" + monthSelect.value;
+            }
+
+            $.ajax({
+                type: "GET",
+        
+                url:  urlString,
+        
+                success: function (response) {
+                    populateRequestList(listGroup, response);
+                }
+            });
+        });
+    });
 });
+
+function populateRequestList(listGroup, data) {
+    for (let request of data["requests"]) {
+        let baseItem = listGroup.querySelector("#rq-lg-i");  
+
+        let item = $(baseItem).clone().removeAttr("id").addClass("list-group-item");
+
+        item.find(".rq-li-no").html("<span>" + request["no"] + "</span>");
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let date = new Date(request["date"]);
+        item.find(".rq-li-da").html("<span class='li-da-normal'>" + (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "</span><span class='li-da-active'>" + monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "</span>");
+
+        item.find(".rq-li-o").html("<span>" + request["office"]["name"] + "</span>");
+        item.find(".rq-li-mo").html("<span>" + request["mode"]["name"] + "</span>");
+        item.find(".rq-li-na").html("<span>" + request["nature"]["name"] + "</span>");
+        item.find(".rq-li-de").html("<span>" + request["detail"] + "</span>");
+        
+        var techniciansCount = 0;
+        var technicians = "<span class='li-t-active'><ul>";
+        for (let technician of request["technicians"]) {
+            technicians += "<li>" + technician["name"] + "</li>";
+            techniciansCount++;
+        }
+        technicians += `</ul></span><span class='badge badge-light border mx-auto'>${ techniciansCount }</span>`;
+        item.find(".rq-li-t").html(technicians);
+
+        let resultBadge = document.createElement("div");
+        resultBadge.classList.add("badge", "py-1");
+        if (request["result"] === 0) {
+            resultBadge.classList.add("badge-success");
+            resultBadge.innerHTML = "Done";
+        } else if (request["result"] === 1) {
+            resultBadge.classList.add("badge-warning");
+            resultBadge.innerHTML = "Pending";
+        } else if (request["result"] === 2) {
+            resultBadge.classList.add("badge-danger");
+            resultBadge.innerHTML = "Cancelled";
+        }
+        item.find(".rq-li-re").html(resultBadge);
+
+        let ratingBadge = document.createElement("div");
+        ratingBadge.classList.add("badge", "py-1");
+        if (request["rating"] === 0) {
+            ratingBadge.classList.add("badge-success");
+            ratingBadge.innerHTML = "Excellent";
+        } else if (request["rating"] === 1) {
+            ratingBadge.classList.add("badge-success");
+            ratingBadge.innerHTML = "Very good";
+        } else if (request["rating"] === 2) {
+            ratingBadge.classList.add("badge-success");
+            ratingBadge.innerHTML = "Good";
+        } else if (request["rating"] === 3) {
+            ratingBadge.classList.add("badge-secondary");
+            ratingBadge.innerHTML = "Fair";
+        } else if (request["rating"] === 4) {
+            ratingBadge.classList.add("badge-danger");
+            ratingBadge.innerHTML = "Poor";
+        } else if (!request["rating"]) {
+            if (request["result"] === 1) {
+                ratingBadge.classList.add("badge-warning");
+                ratingBadge.innerHTML = "Pending";
+            } else if (request["result"] === 2) {
+                ratingBadge.classList.add("badge-danger");
+                ratingBadge.innerHTML = "Cancelled";
+            }
+        }
+        item.find(".rq-li-ra").html(ratingBadge);
+
+        item.appendTo(listGroup);
+    }
+}
 
 document.querySelectorAll(".frcr-cnt").forEach((toggle) => {
     const modal = document.querySelector(toggle.getAttribute("data-target"));

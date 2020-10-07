@@ -1,4 +1,4 @@
-from .. import db
+from ... import db
 
 class ModeModel(db.Model):
     __tablename__ = "mode"

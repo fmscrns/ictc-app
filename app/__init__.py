@@ -2,24 +2,19 @@ import os
 from flask import Flask, Blueprint
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
+from ._config import config_dict
+from .client import create_client_bp
+from .server import create_server_bp
 
-app = Flask(__name__)
+db = SQLAlchemy()
 
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:root@localhost:5432/ictc-service-tracker"
+client_bp = create_client_bp()
+server_bp = create_server_bp()
 
-db = SQLAlchemy(app)
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config_dict[config_name])
+    
+    db.init_app(app)
 
-client_blueprint = Blueprint("client", __name__)
-server_blueprint = Blueprint("server", __name__, url_prefix="/api")
-
-api = Api()
-api.init_app(server_blueprint, add_specs=False)
-
-from app.controllers import *
-
-api.add_namespace(request_namespace, path="/request")
-
-app.register_blueprint(client_blueprint)
-app.register_blueprint(server_blueprint)
+    return app

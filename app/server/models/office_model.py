@@ -1,4 +1,4 @@
-from .. import db
+from ... import db
 
 class OfficeModel(db.Model):
     __tablename__ = "office"
