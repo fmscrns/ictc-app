@@ -44,9 +44,7 @@
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
                         <a class="btn btn-outline-primary btn-sm btn-block" role="button">
-                            <small>
-                                Filter
-                            </small>
+                            <small>Filter</small>
                         </a>
                     </div>
                 </form>
@@ -56,11 +54,8 @@
                     Office
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        {#<a class="font-weight-light small" href="#">City registrar's office</a>
-                        <a class="font-weight-light small" href="#">City legal office</a>
-                        <a class="font-weight-light small" href="#">City engineer's office</a>#}
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
@@ -77,11 +72,8 @@
                     Mode
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        <a class="font-weight-light small" href="#">Walk-in</a>
-                        <a class="font-weight-light small" href="#">Phone</a>
-                        <a class="font-weight-light small" href="#">Email</a>
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
@@ -98,11 +90,8 @@
                     Nature
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        <a class="font-weight-light small" href="#">Internet</a>
-                        <a class="font-weight-light small" href="#">Software assistance</a>
-                        <a class="font-weight-light small" href="#">Printer</a>
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
@@ -128,7 +117,7 @@
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
-                        <a class="btn btn-outline-primary btn-sm btn-block" href="#" role="button">
+                        <a class="btn btn-outline-primary btn-sm btn-block" role="button">
                             <small>
                                 Search
                             </small>
@@ -141,11 +130,8 @@
                     Technician
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        <a class="font-weight-light small" href="#">Gino Mascariñas</a>
-                        <a class="font-weight-light small" href="#">Chuckie Razuman</a>
-                        <a class="font-weight-light small" href="#">Jonas Serino</a>
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="container-fluid">
@@ -162,10 +148,11 @@
                     Result
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        <a class="font-weight-light small" href="#">Done</a>
-                        <a class="font-weight-light small" href="#">Pending</a>
+                        <a class="font-weight-light small" value="0">Done</a>
+                        <a class="font-weight-light small" value="1">Pending</a>
+                        <a class="font-weight-light small" value="2">Cancelled</a>
                     </div>
                 </form>
             </div>
@@ -174,28 +161,28 @@
                     Rating
                 </div>
                 <form class="dropdown-menu">
-                    <div class="container-fluid d-flex flex-column">
+                    <div class="tb-opt-cont container-fluid d-flex flex-column">
                         <h6 class="font-weight-bold small text-muted">Filter by</h6>
-                        <a class="font-weight-light small" href="#">Excellent</a>
-                        <a class="font-weight-light small" href="#">Very good</a>
-                        <a class="font-weight-light small" href="#">Good</a>
-                        <a class="font-weight-light small" href="#">Fair</a>
-                        <a class="font-weight-light small" href="#">Poor</a>
+                        <a class="font-weight-light small" value="0">Excellent</a>
+                        <a class="font-weight-light small" value="1">Very good</a>
+                        <a class="font-weight-light small" value="2">Good</a>
+                        <a class="font-weight-light small" value="3">Fair</a>
+                        <a class="font-weight-light small" value="4">Poor</a>
                     </div>
                 </form>
             </div>
         </div>
     </nav>
     <div class="rq-tc-dvd"></div>
-    <div class="rq-lg list-group box-shadow">
-        <div id="rq-lg-i" class="border rounded mb-1 bg-light px-0 py-1 d-flex justify-content-between align-items-center small text-muted font-weight-light">
+    <div class="rq-lg list-group">
+        <div id="rq-lg-i" class="border rounded mb-1 bg-light box-shadow px-0 py-1 d-flex justify-content-between align-items-center small text-muted font-weight-light">
             <div class="rq-li-no w-50 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-da w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-o w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-mo w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-na w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-de w-100 d-flex text-center justify-content-center align-items-center"></div>
-            <div class="rq-li-t w-100 d-flex justify-content-start align-items-center"></div>
+            <div class="rq-li-t w-100 d-flex text-left justify-content-center align-items-center"></div>
             <div class="rq-li-re w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-ra w-100 d-flex text-center justify-content-center align-items-center"></div>
         </div>

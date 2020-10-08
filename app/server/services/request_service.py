@@ -1,12 +1,11 @@
 from sqlalchemy import extract
 from ... import db
 from ..models import *
-from ..utils.helpers import save_new_photo
 
 class RequestService:
     @staticmethod
     def get_all():
-        # try:
+        try:
             requests = [
                 dict(
                     id = request[0],
@@ -68,15 +67,13 @@ class RequestService:
 
             return 404
 
-        # except:
-        #     return 500
+        except:
+            return 500
 
     @staticmethod
     def post(data):
         try:
             req_pid = str(uuid.uuid4())
-
-            new_photo_fn = save_new_photo(data.get("photo_fn_input"))
 
             new_request = RequestModel(
                 public_id = req_pid,
@@ -85,7 +82,7 @@ class RequestService:
                 detail = data.get("detail_input"),
                 result = data.get("result_input"),
                 rating = data.get("rating_input"),
-                photo_fn = picture_fn,
+                photo_fn = data.get("photo_fn_input"),
                 office_client_id = data.get("office_input"),
                 mode_approach_id = data.get("mode_input"),
                 nature_type_id = data.get("nature_input")
@@ -379,6 +376,491 @@ class RequestService:
 
             if request:
                 return request
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_office(office_id):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.office_client_id == office_id
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_mode(mode_id):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == mode_id
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_nature(nature_id):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == nature_id
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_technician(technician_id):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.public_id == RepairModel.request_task_id
+                ).filter(
+                    RepairModel.technician_fixer_id == technician_id
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_result(result):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.result == result
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_rating(rating):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.rating == rating
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
+
+            return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def get_by_detail(detail):
+        try:
+            requests = [
+                dict(
+                    id = request[0],
+                    no = request[1],
+                    date = request[2],
+                    detail = request[3],
+                    result = request[4],
+                    rating = request[5],
+                    photo_fn = request[6],
+                    office = dict(
+                        office_id = request[7],
+                        office_name = request[8],
+                    ),
+                    mode = dict(
+                        mode_id = request[9],
+                        mode_name = request[10]
+                    ),
+                    nature = dict(
+                        nature_id = request[11],
+                        nature_name = request[12]
+                    ),
+                    technicians = [
+                        dict(
+                            technician_id = technician[0],
+                            technician_name = technician[1]
+                        ) for technician in db.session.query(
+                            TechnicianModel.public_id,
+                            TechnicianModel.name
+                        ).filter(
+                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                            RepairModel.request_task_id == request[0]
+                        ).all()
+                    ]
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id
+                ).filter(
+                    RequestModel.mode_approach_id == ModeModel.public_id
+                ).filter(
+                    RequestModel.nature_type_id == NatureModel.public_id
+                ).filter(
+                    RequestModel.detail.ilike("%{}%".format(detail))
+                ).order_by(RequestModel.date.desc()).all()
+            ]
+
+            if requests:
+                return requests
 
             return 404
 

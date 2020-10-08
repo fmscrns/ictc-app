@@ -2,7 +2,7 @@ import os
 from flask import Flask, Blueprint
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
-from ._config import config_dict
+from .utils._config import config_dict
 from .client import create_client_bp
 from .server import create_server_bp
 

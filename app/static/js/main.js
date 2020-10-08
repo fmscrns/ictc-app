@@ -99,7 +99,7 @@ document.querySelectorAll(".rq-lg").forEach((listGroup) => {
     $.ajax({
         type: "GET",
 
-        url: "/api/request/",
+        url: "api/request/",
 
         success: function (response) {
             populateRequestList(listGroup, response);
@@ -109,8 +109,6 @@ document.querySelectorAll(".rq-lg").forEach((listGroup) => {
 
 document.querySelectorAll(".rq-tb-aa").forEach((container) => {
     container.querySelectorAll(".rq-tb-da").forEach((dateCont) => {
-
-
         const listGroup = document.querySelector(".rq-lg");
         const yearSelect = dateCont.querySelector(".tb-da-y").querySelector("select");
         const monthSelect = dateCont.querySelector(".tb-da-m").querySelector("select");
@@ -121,7 +119,7 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         $.ajax({
             type: "GET",
 
-            url:  "/api/request/newest",
+            url:  "api/request/newest",
     
             success: function (request) {
                 let date = new Date(request["date"]);
@@ -134,7 +132,7 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
             $.ajax({
                 type: "GET",
         
-                url:  "/api/request/oldest",
+                url:  "api/request/oldest",
         
                 success: function (request) {
                     let date = new Date(request["date"]);
@@ -164,7 +162,7 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                 listGroup.removeChild(listGroup.lastChild);
             }
             
-            var urlString = "/api/request/year/" + yearSelect.value;
+            var urlString = "api/request/year/" + yearSelect.value;
 
             if (monthSelect.value != "0") {
                 urlString += "/month/" + monthSelect.value;
@@ -174,6 +172,227 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                 type: "GET",
         
                 url:  urlString,
+        
+                success: function (response) {
+                    populateRequestList(listGroup, response);
+                }
+            });
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-o").forEach((officeCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const officeOption = officeCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/office/",
+    
+            success: function (response) {
+                for (let office of response["offices"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = office["name"];
+
+                    option.addEventListener("click", (e) => {
+                        while (listGroup.lastChild.id !== "rq-lg-i") {
+                            listGroup.removeChild(listGroup.lastChild);
+                        }
+                        
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/office/" + office["id"],
+                    
+                            success: function (response) {
+                                populateRequestList(listGroup, response);
+                            }
+                        });
+                    });
+
+                    officeOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-m").forEach((modeCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const modeOption = modeCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/mode/",
+    
+            success: function (response) {
+                for (let mode of response["modes"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = mode["name"];
+
+                    option.addEventListener("click", (e) => {
+                        while (listGroup.lastChild.id !== "rq-lg-i") {
+                            listGroup.removeChild(listGroup.lastChild);
+                        }
+                        
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/mode/" + mode["id"],
+                    
+                            success: function (response) {
+                                populateRequestList(listGroup, response);
+                            }
+                        });
+                    });
+
+                    modeOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-na").forEach((natureCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const natureOption = natureCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/nature/",
+    
+            success: function (response) {
+                for (let nature of response["natures"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = nature["name"];
+
+                    option.addEventListener("click", (e) => {
+                        while (listGroup.lastChild.id !== "rq-lg-i") {
+                            listGroup.removeChild(listGroup.lastChild);
+                        }
+                        
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/nature/" + nature["id"],
+                    
+                            success: function (response) {
+                                populateRequestList(listGroup, response);
+                            }
+                        });
+                    });
+
+                    natureOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-t").forEach((technicianCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const technicianOption = technicianCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/technician/",
+    
+            success: function (response) {
+                for (let technician of response["technicians"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = technician["name"];
+
+                    option.addEventListener("click", (e) => {
+                        while (listGroup.lastChild.id !== "rq-lg-i") {
+                            listGroup.removeChild(listGroup.lastChild);
+                        }
+                        
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/technician/" + technician["id"],
+                    
+                            success: function (response) {
+                                populateRequestList(listGroup, response);
+                            }
+                        });
+                    });
+
+                    technicianOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-re").forEach((resultCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const resultOption = resultCont.querySelector(".tb-opt-cont");
+
+        resultOption.querySelectorAll("a").forEach((option) => {
+
+            option.addEventListener("click", (e) => {
+                while (listGroup.lastChild.id !== "rq-lg-i") {
+                    listGroup.removeChild(listGroup.lastChild);
+                }
+                console.log(option.value)
+                $.ajax({
+                    type: "GET",
+            
+                    url:  "api/request/result/" + option.getAttribute("value"),
+            
+                    success: function (response) {
+                        populateRequestList(listGroup, response);
+                    }
+                });
+            });
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-ra").forEach((ratingCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const ratingOption = ratingCont.querySelector(".tb-opt-cont");
+
+        ratingOption.querySelectorAll("a").forEach((option) => {
+            option.addEventListener("click", (e) => {
+                while (listGroup.lastChild.id !== "rq-lg-i") {
+                    listGroup.removeChild(listGroup.lastChild);
+                }
+                
+                $.ajax({
+                    type: "GET",
+            
+                    url:  "api/request/rating/" + option.getAttribute("value"),
+            
+                    success: function (response) {
+                        populateRequestList(listGroup, response);
+                    }
+                });
+            });
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-de").forEach((detailCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const detailInput = detailCont.querySelector("input");
+        const detailSubmit = detailCont.querySelector("a");
+
+        detailSubmit.addEventListener("click", (e) => {
+            while (listGroup.lastChild.id !== "rq-lg-i") {
+                listGroup.removeChild(listGroup.lastChild);
+            }
+            
+            $.ajax({
+                type: "GET",
+        
+                url:  "api/request/detail/" + detailInput.value,
         
                 success: function (response) {
                     populateRequestList(listGroup, response);
@@ -201,7 +420,7 @@ function populateRequestList(listGroup, data) {
         item.find(".rq-li-de").html("<span>" + request["detail"] + "</span>");
         
         var techniciansCount = 0;
-        var technicians = "<span class='li-t-active'><ul>";
+        var technicians = "<span id='li-t-active'><ul>";
         for (let technician of request["technicians"]) {
             technicians += "<li>" + technician["name"] + "</li>";
             techniciansCount++;

@@ -4,7 +4,7 @@ from app import create_app
 app = create_app(os.getenv("BOILERPLATE_ENV"))
 app.app_context().push()
 
-from app._prep import establish_routes
+from app.utils._prep import establish_routes
 app = establish_routes(app)
 
 from flask_script import Manager

@@ -17,9 +17,3 @@ class CreateRequestForm(FlaskForm):
     photo_fn_input = FileField("Photo of actual file", validators=[FileAllowed(["jpg", "jpeg", "png"]), FileRequired()])
 
     submit_input = SubmitField("Create request")
-
-    def validate_no_input(self, no_input):
-        
-
-
-        raise ValidationError("Oh no.")
