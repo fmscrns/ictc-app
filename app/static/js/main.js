@@ -95,318 +95,47 @@ document.querySelectorAll(".cs-rs").forEach((card) => {
 });
 
 // REQUESTS
-document.querySelectorAll(".rq-lg").forEach((listGroup) => {
+function filterRequestsAjaxCall(queryString, listGroup) {
+    while ($(listGroup.lastChild).hasClass("list-group-item-removable")) {
+        listGroup.removeChild(listGroup.lastChild);
+    }
+
+    const loading = listGroup.querySelector(".rq-ld-sp");
+    loading.classList.remove("d-none");
+    loading.classList.add("d-block");
+
+    const emptyFeedback = listGroup.querySelector(".rq-lg-empty");
+    loading.classList.remove("d-block");
+    loading.classList.add("d-none");
+
     $.ajax({
         type: "GET",
 
-        url: "api/request/",
+        url:  "api/request/" + queryString,
 
         success: function (response) {
             populateRequestList(listGroup, response);
+
+            emptyFeedback.classList.remove("d-block");
+            emptyFeedback.classList.add("d-none");
+            loading.classList.remove("d-block");
+            loading.classList.add("d-none");
+        },
+
+        error: function(xhr, textStatus, error) {
+            if (xhr.status === 404) {
+                emptyFeedback.classList.remove("d-none");
+                emptyFeedback.classList.add("d-block");
+            }
         }
     });
-});
-
-document.querySelectorAll(".rq-tb-aa").forEach((container) => {
-    container.querySelectorAll(".rq-tb-da").forEach((dateCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const yearSelect = dateCont.querySelector(".tb-da-y").querySelector("select");
-        const monthSelect = dateCont.querySelector(".tb-da-m").querySelector("select");
-
-        var newestRequestYear;
-        var oldestRequestYear;
-
-        $.ajax({
-            type: "GET",
-
-            url:  "api/request/newest",
-    
-            success: function (request) {
-                let date = new Date(request["date"]);
-
-                OldestRequestAjaxCall(date.getFullYear());
-            }
-        });
-
-        function OldestRequestAjaxCall(newestRequestYear) {
-            $.ajax({
-                type: "GET",
-        
-                url:  "api/request/oldest",
-        
-                success: function (request) {
-                    let date = new Date(request["date"]);
-
-                    oldestRequestYear = date.getFullYear();
-
-                    let inbetweenYearCount = oldestRequestYear - newestRequestYear;
-                    
-                    
-                    while (inbetweenYearCount >= 0) {
-                        let yearOption = document.createElement("option");
-                        
-                        yearOption.innerHTML = (newestRequestYear + inbetweenYearCount).toString();
-                        
-                        yearSelect.append(yearOption)
-                        
-                        inbetweenYearCount--;
-                    }
-                }
-            });
-        }
-
-        const filter = dateCont.querySelector("a");
-
-        filter.addEventListener("click", (e) => {
-            while (listGroup.lastChild.id !== "rq-lg-i") {
-                listGroup.removeChild(listGroup.lastChild);
-            }
-            
-            var urlString = "api/request/year/" + yearSelect.value;
-
-            if (monthSelect.value != "0") {
-                urlString += "/month/" + monthSelect.value;
-            }
-
-            $.ajax({
-                type: "GET",
-        
-                url:  urlString,
-        
-                success: function (response) {
-                    populateRequestList(listGroup, response);
-                }
-            });
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-o").forEach((officeCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const officeOption = officeCont.querySelector(".tb-opt-cont");
-
-        $.ajax({
-            type: "GET",
-
-            url:  "api/office/",
-    
-            success: function (response) {
-                for (let office of response["offices"]) {
-                    let option = document.createElement("a");
-
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = office["name"];
-
-                    option.addEventListener("click", (e) => {
-                        while (listGroup.lastChild.id !== "rq-lg-i") {
-                            listGroup.removeChild(listGroup.lastChild);
-                        }
-                        
-                        $.ajax({
-                            type: "GET",
-                    
-                            url:  "api/request/office/" + office["id"],
-                    
-                            success: function (response) {
-                                populateRequestList(listGroup, response);
-                            }
-                        });
-                    });
-
-                    officeOption.append(option);
-                }
-            }
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-m").forEach((modeCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const modeOption = modeCont.querySelector(".tb-opt-cont");
-
-        $.ajax({
-            type: "GET",
-
-            url:  "api/mode/",
-    
-            success: function (response) {
-                for (let mode of response["modes"]) {
-                    let option = document.createElement("a");
-
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = mode["name"];
-
-                    option.addEventListener("click", (e) => {
-                        while (listGroup.lastChild.id !== "rq-lg-i") {
-                            listGroup.removeChild(listGroup.lastChild);
-                        }
-                        
-                        $.ajax({
-                            type: "GET",
-                    
-                            url:  "api/request/mode/" + mode["id"],
-                    
-                            success: function (response) {
-                                populateRequestList(listGroup, response);
-                            }
-                        });
-                    });
-
-                    modeOption.append(option);
-                }
-            }
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-na").forEach((natureCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const natureOption = natureCont.querySelector(".tb-opt-cont");
-
-        $.ajax({
-            type: "GET",
-
-            url:  "api/nature/",
-    
-            success: function (response) {
-                for (let nature of response["natures"]) {
-                    let option = document.createElement("a");
-
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = nature["name"];
-
-                    option.addEventListener("click", (e) => {
-                        while (listGroup.lastChild.id !== "rq-lg-i") {
-                            listGroup.removeChild(listGroup.lastChild);
-                        }
-                        
-                        $.ajax({
-                            type: "GET",
-                    
-                            url:  "api/request/nature/" + nature["id"],
-                    
-                            success: function (response) {
-                                populateRequestList(listGroup, response);
-                            }
-                        });
-                    });
-
-                    natureOption.append(option);
-                }
-            }
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-t").forEach((technicianCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const technicianOption = technicianCont.querySelector(".tb-opt-cont");
-
-        $.ajax({
-            type: "GET",
-
-            url:  "api/technician/",
-    
-            success: function (response) {
-                for (let technician of response["technicians"]) {
-                    let option = document.createElement("a");
-
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = technician["name"];
-
-                    option.addEventListener("click", (e) => {
-                        while (listGroup.lastChild.id !== "rq-lg-i") {
-                            listGroup.removeChild(listGroup.lastChild);
-                        }
-                        
-                        $.ajax({
-                            type: "GET",
-                    
-                            url:  "api/request/technician/" + technician["id"],
-                    
-                            success: function (response) {
-                                populateRequestList(listGroup, response);
-                            }
-                        });
-                    });
-
-                    technicianOption.append(option);
-                }
-            }
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-re").forEach((resultCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const resultOption = resultCont.querySelector(".tb-opt-cont");
-
-        resultOption.querySelectorAll("a").forEach((option) => {
-
-            option.addEventListener("click", (e) => {
-                while (listGroup.lastChild.id !== "rq-lg-i") {
-                    listGroup.removeChild(listGroup.lastChild);
-                }
-                console.log(option.value)
-                $.ajax({
-                    type: "GET",
-            
-                    url:  "api/request/result/" + option.getAttribute("value"),
-            
-                    success: function (response) {
-                        populateRequestList(listGroup, response);
-                    }
-                });
-            });
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-ra").forEach((ratingCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const ratingOption = ratingCont.querySelector(".tb-opt-cont");
-
-        ratingOption.querySelectorAll("a").forEach((option) => {
-            option.addEventListener("click", (e) => {
-                while (listGroup.lastChild.id !== "rq-lg-i") {
-                    listGroup.removeChild(listGroup.lastChild);
-                }
-                
-                $.ajax({
-                    type: "GET",
-            
-                    url:  "api/request/rating/" + option.getAttribute("value"),
-            
-                    success: function (response) {
-                        populateRequestList(listGroup, response);
-                    }
-                });
-            });
-        });
-    });
-
-    container.querySelectorAll(".rq-tb-de").forEach((detailCont) => {
-        const listGroup = document.querySelector(".rq-lg");
-        const detailInput = detailCont.querySelector("input");
-        const detailSubmit = detailCont.querySelector("a");
-
-        detailSubmit.addEventListener("click", (e) => {
-            while (listGroup.lastChild.id !== "rq-lg-i") {
-                listGroup.removeChild(listGroup.lastChild);
-            }
-            
-            $.ajax({
-                type: "GET",
-        
-                url:  "api/request/detail/" + detailInput.value,
-        
-                success: function (response) {
-                    populateRequestList(listGroup, response);
-                }
-            });
-        });
-    });
-});
+}
 
 function populateRequestList(listGroup, data) {
     for (let request of data["requests"]) {
         let baseItem = listGroup.querySelector("#rq-lg-i");  
 
-        let item = $(baseItem).clone().removeAttr("id").addClass("list-group-item");
+        let item = $(baseItem).clone().removeAttr("id").addClass("list-group-item list-group-item-removable");
 
         item.find(".rq-li-no").html("<span>" + request["no"] + "</span>");
 
@@ -414,19 +143,19 @@ function populateRequestList(listGroup, data) {
         let date = new Date(request["date"]);
         item.find(".rq-li-da").html("<span class='li-da-normal'>" + (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "</span><span class='li-da-active'>" + monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "</span>");
 
-        item.find(".rq-li-o").html("<span>" + request["office"]["name"] + "</span>");
-        item.find(".rq-li-mo").html("<span>" + request["mode"]["name"] + "</span>");
-        item.find(".rq-li-na").html("<span>" + request["nature"]["name"] + "</span>");
+        item.find(".rq-li-o").html("<span>" + request["client"]["name"] + "</span>");
+        item.find(".rq-li-mo").html("<span>" + request["approach"]["name"] + "</span>");
+        item.find(".rq-li-na").html("<span>" + request["type"]["name"] + "</span>");
         item.find(".rq-li-de").html("<span>" + request["detail"] + "</span>");
         
-        var techniciansCount = 0;
-        var technicians = "<span id='li-t-active'><ul>";
-        for (let technician of request["technicians"]) {
-            technicians += "<li>" + technician["name"] + "</li>";
-            techniciansCount++;
+        var fixersCount = 0;
+        var fixers = "<span id='li-t-active'><ul>";
+        for (let fixer of request["fixers"]) {
+            fixers += "<li>" + fixer["name"] + "</li>";
+            fixersCount++;
         }
-        technicians += `</ul></span><span class='badge badge-light border mx-auto'>${ techniciansCount }</span>`;
-        item.find(".rq-li-t").html(technicians);
+        fixers += `</ul></span><span class='badge badge-light border mx-auto'>${ fixersCount }</span>`;
+        item.find(".rq-li-t").html(fixers);
 
         let resultBadge = document.createElement("div");
         resultBadge.classList.add("badge", "py-1");
@@ -459,14 +188,8 @@ function populateRequestList(listGroup, data) {
         } else if (request["rating"] === 4) {
             ratingBadge.classList.add("badge-danger");
             ratingBadge.innerHTML = "Poor";
-        } else if (!request["rating"]) {
-            if (request["result"] === 1) {
-                ratingBadge.classList.add("badge-warning");
-                ratingBadge.innerHTML = "Pending";
-            } else if (request["result"] === 2) {
-                ratingBadge.classList.add("badge-danger");
-                ratingBadge.innerHTML = "Cancelled";
-            }
+        } else if (request["rating"] === 5) {
+            
         }
         item.find(".rq-li-ra").html(ratingBadge);
 
@@ -474,212 +197,915 @@ function populateRequestList(listGroup, data) {
     }
 }
 
-document.querySelectorAll(".frcr-cnt").forEach((toggle) => {
-    const modal = document.querySelector(toggle.getAttribute("data-target"));
+document.querySelectorAll(".rq-lg").forEach((listGroup) => {
+    filterRequestsAjaxCall("", listGroup);
+});
 
-    modal.querySelectorAll(".crt-rq-pf").forEach((formGroup) => {
-        const dropzone = formGroup.querySelector(".drop-zone");
-        
-        const input = dropzone.querySelector("input");
+document.querySelectorAll(".rq-tb-aa").forEach((container) => {
+    container.querySelectorAll(".rq-tb-da").forEach((dateCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const yearSelect = dateCont.querySelector(".tb-da-y").querySelector("select");
+        const monthSelect = dateCont.querySelector(".tb-da-m").querySelector("select");
 
-        const loadPrompt = dropzone.querySelector(".prompt__load-photo");
-        const disposePrompt = dropzone.querySelector(".prompt__dispose-photo");
+        var newestRequestYear;
+        var oldestRequestYear;
 
-        loadPrompt.addEventListener("click", (e) => {
-            input.click();
-        });
+        $.ajax({
+            type: "GET",
 
-        disposePrompt.addEventListener("click", (e) => {
-            input.value = "";
+            url:  "api/request/newest",
+    
+            success: function (request) {
+                let date = new Date(request["date"]);
 
-            updateThumbnail(dropzone);
-
-            disposePrompt.classList.remove("d-block");
-            disposePrompt.classList.add("d-none");
-        });
-
-        input.addEventListener("change", (e) => {
-            if (input.files.length) {
-                updateThumbnail(dropzone, input.files[0]);
-
-                disposePrompt.classList.remove("d-none");
-                disposePrompt.classList.add("d-block");
+                oldestRequestAjaxCall(date.getFullYear());
             }
         });
 
-        dropzone.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropzone.classList.add("drop-zone--over");
-        });
+        function oldestRequestAjaxCall(newestRequestYear) {
+            $.ajax({
+                type: "GET",
         
-        ["dragleave", "dragend"].forEach((type) => {
-            dropzone.addEventListener(type, (e) => {
-                dropzone.classList.remove("drop-zone--over");
+                url:  "api/request/oldest",
+        
+                success: function (request) {
+                    let date = new Date(request["date"]);
+
+                    oldestRequestYear = date.getFullYear();
+
+                    let inbetweenYearCount = oldestRequestYear - newestRequestYear;
+                    
+                    
+                    while (inbetweenYearCount >= 0) {
+                        let yearOption = document.createElement("option");
+                        
+                        yearOption.innerHTML = (newestRequestYear + inbetweenYearCount).toString();
+                        
+                        yearSelect.append(yearOption)
+                        
+                        inbetweenYearCount--;
+                    }
+                }
             });
-        });
-        
-        dropzone.addEventListener("drop", (e) => {
-            e.preventDefault();
-        
-            if (e.dataTransfer.files.length) {
-              input.files = e.dataTransfer.files;
-              
-              updateThumbnail(dropzone, e.dataTransfer.files[0]);
+        }
 
-              disposePrompt.classList.remove("d-none");
-              disposePrompt.classList.add("d-block");
-            }
-        
-            dropzone.classList.remove("drop-zone--over");
-        });
+        const filter = dateCont.querySelector("a");
 
-        function updateThumbnail(dropzone, file) {
-            if (file) {
-                const reader = new FileReader();
-          
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    dropzone.style.backgroundImage = `url('${reader.result}')`;
-                };
-            } else {
-                dropzone.style.backgroundImage = null;
+        filter.addEventListener("click", () => {
+            var queryString = "year/" + yearSelect.value;
+
+            if (monthSelect.value != "0") {
+                queryString += "/month/" + monthSelect.value;
             }
-        }          
+
+            filterRequestsAjaxCall(queryString, listGroup);
+        });
     });
 
-    const noFormGroup = modal.querySelector(".crt-rq-no");
-    const dateFormGroup = modal.querySelector(".crt-rq-da");
+    container.querySelectorAll(".rq-tb-o").forEach((officeCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const officeOption = officeCont.querySelector(".tb-opt-cont");
 
+        const manageBtn = officeCont.querySelector("button");
+        const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
+        const manageListGroup = manageModal.querySelector("ul");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/office/",
+    
+            success: function (response) {
+                for (let office of response["offices"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = office["name"];
+
+                    option.addEventListener("click", () => {
+                        filterRequestsAjaxCall("office/" + office["id"], listGroup);
+                    });
+
+                    officeOption.append(option);
+
+                    let item = $(manageListGroup.querySelector("#mng-offc-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+
+                    item.find("span").html(office["name"]);
+
+                    item.appendTo(manageListGroup);
+                }
+            }
+        });
+
+
+    });
+
+    container.querySelectorAll(".rq-tb-m").forEach((modeCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const modeOption = modeCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/mode/",
+    
+            success: function (response) {
+                for (let mode of response["modes"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = mode["name"];
+
+                    option.addEventListener("click", () => {
+                        filterRequestsAjaxCall("mode/" + mode["id"], listGroup);
+                    });
+
+                    modeOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-na").forEach((natureCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const natureOption = natureCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/nature/",
+    
+            success: function (response) {
+                for (let nature of response["natures"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = nature["name"];
+
+                    option.addEventListener("click", () => {
+                        filterRequestsAjaxCall("nature/" + nature["id"], listGroup);
+                    });
+
+                    natureOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-t").forEach((technicianCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const technicianOption = technicianCont.querySelector(".tb-opt-cont");
+
+        $.ajax({
+            type: "GET",
+
+            url:  "api/technician/",
+    
+            success: function (response) {
+                for (let technician of response["technicians"]) {
+                    let option = document.createElement("a");
+
+                    option.classList.add("font-weight-light", "small");
+                    option.innerHTML = technician["name"];
+
+                    option.addEventListener("click", () => {
+                        filterRequestsAjaxCall("technician/" + technician["id"], listGroup);
+                    });
+
+                    technicianOption.append(option);
+                }
+            }
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-re").forEach((resultCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const resultOption = resultCont.querySelector(".tb-opt-cont");
+
+        resultOption.querySelectorAll("a").forEach((option) => {
+
+            option.addEventListener("click", () => {
+                filterRequestsAjaxCall("result/" + option.getAttribute("value"), listGroup);
+            });
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-ra").forEach((ratingCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+        const ratingOption = ratingCont.querySelector(".tb-opt-cont");
+
+        ratingOption.querySelectorAll("a").forEach((option) => {
+            option.addEventListener("click", () => {
+                filterRequestsAjaxCall("rating/" + option.getAttribute("value"), listGroup);
+            });
+        });
+    });
+
+    container.querySelectorAll(".rq-tb-de").forEach((detailCont) => {
+        const listGroup = document.querySelector(".rq-lg");
+
+        const detailInput = detailCont.querySelector("input");
+        const detailSubmit = detailCont.querySelector("a");
+
+        detailSubmit.addEventListener("click", () => {
+            filterRequestsAjaxCall("detail/" + detailInput.value, listGroup);
+        });
+    });
+});
+
+document.querySelectorAll(".frcr-cnt").forEach((toggle) => {
+    const modal = document.querySelector(toggle.getAttribute("data-target"));
+    const form = modal.querySelector("form");
+    const formBody = form.querySelector(".modal-body");
+
+    const submit = form.querySelector("#crtrq_submit_input");
+
+    const photoFormGroup = formBody.querySelector(".crt-rq-pf");
+    const noFormGroup = formBody.querySelector(".crt-rq-no");
+    const dateFormGroup = formBody.querySelector(".crt-rq-da");
+
+    const photoInput = photoFormGroup.querySelector("input");
     const noInput = noFormGroup.querySelector("input");
     const dateInput = dateFormGroup.querySelector("input");
+    const officeInput = formBody.querySelector(".crt-rq-o").querySelector("select");
+    const modeInput = formBody.querySelector(".crt-rq-m").querySelector("select");
+    const natureInput = formBody.querySelector(".crt-rq-na").querySelector("select");
+    const detailInput = formBody.querySelector(".crt-rq-de").querySelector("textarea");
+    const technicianInput = formBody.querySelector(".crt-rq-t").querySelector("select");
+
+    var photoInputChange = false;
+    var selectInputChange = false;
 
     if (noInput.value != "") {
         $(modal).modal("show");
     }
 
-    const thisYear = new Date().getFullYear();
+    const photoDropzone = photoFormGroup.querySelector(".drop-zone");
+    const photoLoadPrompt = photoDropzone.querySelector(".prompt__load-photo");
+    const photoDisposePrompt = photoDropzone.querySelector(".prompt__dispose-photo");
 
-    const noRegex = /^([1-9]|1[012])-([1-9]|([1-9][0-9]))+$/;
-    const dateRegex = /^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/;
+    photoLoadPrompt.addEventListener("click", () => {
+        photoInput.click();
+    });
 
-    var typingTimer;
-    const doneTypingInterval = 500;
+    photoDisposePrompt.addEventListener("click", () => {
+        photoInput.value = "";
 
-    noInput.addEventListener("keyup", (e) => {
-        let thisInput = e.currentTarget;
+        updatePhotoThumbnail(photoDropzone);
 
-        if (noRegex.test(thisInput.value) === true) {
-            window.clearTimeout(typingTimer);
+        photoDisposePrompt.classList.remove("d-block");
+        photoDisposePrompt.classList.add("d-none");
 
-            let noInputMonth = parseInt(thisInput.value.split("-")[0]);
+        photoInputChange = false;
+    });
 
-            if (noInputMonth < 10) {
-                noInputMonth = "0" + noInputMonth.toString();
+    photoInput.addEventListener("change", () => {
+        if (photoInput.files.length) {
+            updatePhotoThumbnail(photoDropzone, photoInput.files[0]);
 
-            } else {
-                noInputMonth = noInputMonth.toString();
-            }
+            photoDisposePrompt.classList.remove("d-none");
+            photoDisposePrompt.classList.add("d-block");
+        }
 
-            if (dateRegex.test(dateInput.value) === true) {
-                let splitDateInputArr = dateInput.value.split("-");
+        photoInputChange = true;
+    });
 
-                splitDateInputArr.splice(1, 1, noInputMonth);
-                dateInput.value = splitDateInputArr.join("-");
+    photoDropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
 
-            } else {
-                dateInput.value = `${ thisYear }-${ noInputMonth }-01`;
-            }
+        photoDropzone.classList.add("drop-zone--over");
+    });
 
-            thisInput.classList.remove("is-invalid");
-            $(thisInput).closest(".form-group").find(".invalid-feedback").html("");
+    ["dragleave", "dragend"].forEach((type) => {
+        photoDropzone.addEventListener(type, () => {
+            photoDropzone.classList.remove("drop-zone--over");
+        });
+    });
+
+    photoDropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+
+        if (e.dataTransfer.files.length) {
+            photoInput.files = e.dataTransfer.files;
+
+            updatePhotoThumbnail(photoDropzone, e.dataTransfer.files[0]);
+
+            photoDisposePrompt.classList.remove("d-none");
+            photoDisposePrompt.classList.add("d-block");
+        }
+
+        photoDropzone.classList.remove("drop-zone--over");
+    });
+
+    function updatePhotoThumbnail(dropzone, file) {
+        if (file) {
+            const reader = new FileReader();
+      
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                dropzone.style.backgroundImage = `url('${reader.result}')`;
+            };
 
         } else {
-            window.clearTimeout(typingTimer);
+            dropzone.style.backgroundImage = null;
+        }
+    }
 
-            thisInput.classList.remove("is-invalid");
-            $(thisInput).closest(".form-group").find(".invalid-feedback").html("");
+    var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
+    var currentMonth = parseInt(currentDate.getMonth()) + 1;
+    var currentDay = parseInt(currentDate.getDate());
+    var currentDateString = currentYear.toString() + "-" + ((currentMonth < 10) ? ("0" + currentMonth.toString()) : (currentMonth.toString())) + "-" + ((currentDay < 10) ? ("0" + currentDay.toString()) : (currentDay.toString()));
+    dateInput.setAttribute("max", currentDateString);
+    var dateRegex = /^(?:19|20)(?:(?:[13579][26]|[02468][048])-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))|(?:[0-9]{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:29|30))|(?:(?:0[13578]|1[02])-31)))$/;
 
-            typingTimer = setTimeout(function () {
-                thisInput.classList.add("is-invalid");
-                $(thisInput).closest(".form-group").find(".invalid-feedback").html("Invalid request number.");
-            }, doneTypingInterval)
+    var inputtedMonthFinal = "([1-9]|1[012])";
+    var noRegexString = `${ inputtedMonthFinal }-([1-9]|[1-9][0-9]+)`;
+    noInput.setAttribute("pattern", noRegexString);   
+    
+    var typingTimer;
+    var doneTypingInterval = 1000;
+    
+    dateInput.addEventListener("change", function () {
+        dateInput.classList.remove("is-valid");
+        dateInput.classList.remove("is-invalid");
+
+        if (dateRegex.test(dateInput.value) === true) {
+            let splitInput = dateInput.value.split("-");
+            let inputtedYear = splitInput[0];
+            let inputtedMonth = splitInput[1];
+            let inputtedDay = splitInput[2];
+
+            if ((parseInt(inputtedYear) >= 2015) && (parseInt(inputtedYear) < parseInt(currentYear))) {
+                inputtedMonthFinal = parseInt(inputtedMonth).toString();
+                noRegexString = `${ inputtedMonthFinal }-([1-9]|[1-9][0-9]+)`;
+                noInput.setAttribute("pattern", noRegexString);
+
+                let noRegex = new RegExp("^"+noRegexString+"$");
+
+                if (noRegex.test(noInput.value) === true) {
+                    window.clearTimeout(typingTimer);
+
+                    $(submit).attr("disabled", "true");
+                    $(submit).val("Loading");
+
+                    dateInput.classList.remove("is-invalid");
+                    dateInput.classList.remove("is-valid");
+                    noInput.classList.remove("is-invalid");
+                    noInput.classList.remove("is-valid");
+
+
+                    typingTimer = setTimeout(function () {
+                        noInput.classList.remove("is-valid");
+                        noInput.classList.remove("is-invalid");
+
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/no/" + noInput.value + "/year/" + inputtedYear,
+                    
+                            success: function () {
+                                dateInput.classList.add("is-invalid");
+                                $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                noInput.classList.add("is-invalid");
+                                $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                $(submit).removeAttr("disabled");
+                                $(submit).val("Create");
+                                $(submit).html("Create");
+                            },
+                
+                            error: function () {
+                                dateInput.classList.add("is-valid");
+                                $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                noInput.classList.add("is-valid");
+                                $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                $(submit).removeAttr("disabled");
+                                $(submit).val("Create");
+                            }
+                        });
+
+                    }, doneTypingInterval);
+    
+                } else if (noInput.value) {
+                    noInput.classList.remove("is-valid");
+                    noInput.classList.remove("is-invalid");
+
+                    dateInput.classList.add("is-valid");
+                    $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                    noInput.classList.add("is-invalid");
+                    $(noInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");
+    
+                } else {
+                    dateInput.classList.add("is-valid");
+                    $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                }
+
+            } else if ((parseInt(inputtedYear) === parseInt(currentYear))) {
+                if (parseInt(inputtedMonth) < parseInt(currentMonth)) {
+                    inputtedMonthFinal = parseInt(inputtedMonth).toString();
+                    noRegexString = `${ inputtedMonthFinal }-([1-9]|[1-9][0-9]+)`;
+                    noInput.setAttribute("pattern", noRegexString);
+
+                    let noRegex = new RegExp("^"+noRegexString+"$");
+
+                    if (noRegex.test(noInput.value) === true) {
+                        window.clearTimeout(typingTimer);
+
+                        $(submit).attr("disabled", "true");
+                        $(submit).val("Loading");
+
+                        dateInput.classList.remove("is-invalid");
+                        dateInput.classList.remove("is-valid");
+                        noInput.classList.remove("is-invalid");
+                        noInput.classList.remove("is-valid");
+
+
+                        typingTimer = setTimeout(function () {
+                            noInput.classList.remove("is-valid");
+                            noInput.classList.remove("is-invalid");
+
+                            $.ajax({
+                                type: "GET",
+                        
+                                url:  "api/request/no/" + noInput.value + "/year/" + inputtedYear,
+                        
+                                success: function () {
+                                    dateInput.classList.add("is-invalid");
+                                    $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                    noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                    noInput.classList.add("is-invalid");
+                                    $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                    $(submit).removeAttr("disabled");
+                                    $(submit).val("Create");
+                                    $(submit).html("Create");
+                                },
+                    
+                                error: function () {
+                                    dateInput.classList.add("is-valid");
+                                    $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                    noInput.classList.add("is-valid");
+                                    $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                    $(submit).removeAttr("disabled");
+                                    $(submit).val("Create");
+                                }
+                            });
+
+                        }, doneTypingInterval);
+        
+                    } else if (noInput.value) {
+                        noInput.classList.remove("is-valid");
+                        noInput.classList.remove("is-invalid");
+
+                        dateInput.classList.add("is-valid");
+                        $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                        noInput.classList.add("is-invalid");
+                        $(noInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");
+        
+                    } else {
+                        dateInput.classList.add("is-valid");
+                        $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                    }
+    
+                } else if (parseInt(inputtedMonth) === parseInt(currentMonth)) {
+                    if (parseInt(inputtedDay) <= parseInt(currentDay)) {
+                        inputtedMonthFinal = parseInt(inputtedMonth).toString();
+                        noRegexString = `${ inputtedMonthFinal }-([1-9]|[1-9][0-9]+)`;
+                        noInput.setAttribute("pattern", noRegexString);
+
+                        let noRegex = new RegExp("^"+noRegexString+"$");
+
+                        if (noRegex.test(noInput.value) === true) {
+                            window.clearTimeout(typingTimer);
+
+                            $(submit).attr("disabled", "true");
+                            $(submit).val("Loading");
+
+                            dateInput.classList.remove("is-invalid");
+                            dateInput.classList.remove("is-valid");
+                            noInput.classList.remove("is-invalid");
+                            noInput.classList.remove("is-valid");
+
+
+                            typingTimer = setTimeout(function () {
+                                noInput.classList.remove("is-valid");
+                                noInput.classList.remove("is-invalid");
+
+                                $.ajax({
+                                    type: "GET",
+                            
+                                    url:  "api/request/no/" + noInput.value + "/year/" + inputtedYear,
+                            
+                                    success: function () {
+                                        dateInput.classList.add("is-invalid");
+                                        $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                        noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                        noInput.classList.add("is-invalid");
+                                        $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                        $(submit).removeAttr("disabled");
+                                        $(submit).val("Create");
+                                        $(submit).html("Create");
+                                    },
+                        
+                                    error: function () {
+                                        dateInput.classList.add("is-valid");
+                                        $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                        noInput.classList.add("is-valid");
+                                        $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                        $(submit).removeAttr("disabled");
+                                        $(submit).val("Create");
+                                    }
+                                });
+
+                            }, doneTypingInterval);
+            
+                        } else if (noInput.value) {
+                            noInput.classList.remove("is-valid");
+                            noInput.classList.remove("is-invalid");
+    
+                            dateInput.classList.add("is-valid");
+                            $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                            noInput.classList.add("is-invalid");
+                            $(noInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");
+            
+                        } else {
+                            dateInput.classList.add("is-valid");
+                            $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                        }
+                        
+                    } else {
+                        dateInput.classList.add("is-invalid");
+                        $(dateInput).closest(".form-group").find(".invalid-feedback").html("Value must be today or earlier.");
+                    }
+                } else {
+                    dateInput.classList.add("is-invalid");
+                    $(dateInput).closest(".form-group").find(".invalid-feedback").html("Value must be today or earlier.");
+                }
+
+            } else if (parseInt(inputtedYear) < 2015) {
+                dateInput.classList.add("is-invalid");
+                $(dateInput).closest(".form-group").find(".invalid-feedback").html("Value must be 01/01/2015 or later.");
+               
+            } else if (parseInt(inputtedYear) > parseInt(currentYear)) {
+                dateInput.classList.add("is-invalid");
+                $(dateInput).closest(".form-group").find(".invalid-feedback").html("Value must be today or earlier.");
+            }
+
+        } else {
+            dateInput.classList.add("is-invalid");
+            $(dateInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");[]
         }
     });
 
-    dateInput.addEventListener("change", (e) => {
-        let thisInput = e.currentTarget;
+    noInput.addEventListener("keyup", function () {
+        noInput.classList.remove("is-valid");
+        noInput.classList.remove("is-invalid");
 
-        if (dateRegex.test(thisInput.value) === true) {
-            let dateInputMonth = parseInt(thisInput.value.split("-")[1]);
+        let noRegex = new RegExp("^"+noRegexString+"$");
 
-            if (noRegex.test(noInput.value) === true) {
-                let splitNoInputArr = noInput.value.split("-");
+        if (noRegex.test(noInput.value) === true) {
+            if (dateRegex.test(dateInput.value) === true) {
+                let splitInput = dateInput.value.split("-");
+                let inputtedYear = splitInput[0];
+                let inputtedMonth = splitInput[1];
+                let inputtedDay = splitInput[2];
 
-                splitNoInputArr.splice(0, 1, dateInputMonth.toString())
-                noInput.value = splitNoInputArr.join("-");
+                if ((parseInt(inputtedYear) >= 2015) && (parseInt(inputtedYear) < parseInt(currentYear))) {
+                    window.clearTimeout(typingTimer);
 
-            } else {
-                noInput.classList.remove("is-invalid");
-                $(noInput).closest(".form-group").find(".invalid-feedback").html("");
+                    $(submit).attr("disabled", "true");
+                    $(submit).val("Loading");
 
-                noInput.value = `${ (dateInputMonth).toString() }-1`;
+                    dateInput.classList.remove("is-invalid");
+                    dateInput.classList.remove("is-valid");
+                    noInput.classList.remove("is-invalid");
+                    noInput.classList.remove("is-valid");
+
+                    typingTimer = setTimeout(function () {
+                        dateInput.classList.remove("is-valid");
+                        dateInput.classList.remove("is-invalid");
+
+                        $.ajax({
+                            type: "GET",
+                    
+                            url:  "api/request/no/" + noInput.value + "/year/" + dateInput.value.split("-")[0],
+                    
+                            success: function () {
+                                dateInput.classList.add("is-invalid");
+                                $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                noInput.classList.add("is-invalid");
+                                $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                $(submit).removeAttr("disabled");
+                                $(submit).val("Create");
+                            },
+                
+                            error: function () {
+                                dateInput.classList.add("is-valid");
+                                $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                noInput.classList.add("is-valid");
+                                $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                $(submit).removeAttr("disabled");
+                                $(submit).val("Create");
+                            }
+                        });
+
+                    }, doneTypingInterval);
+
+                } else if ((parseInt(inputtedYear) === parseInt(currentYear))) {
+                    if (parseInt(inputtedMonth) < parseInt(currentMonth)) {
+                        window.clearTimeout(typingTimer);
+
+                        $(submit).attr("disabled", "true");
+                        $(submit).val("Loading");
+
+                        dateInput.classList.remove("is-invalid");
+                        dateInput.classList.remove("is-valid");
+                        noInput.classList.remove("is-invalid");
+                        noInput.classList.remove("is-valid");
+
+                        typingTimer = setTimeout(function () {
+                            dateInput.classList.remove("is-valid");
+                            dateInput.classList.remove("is-invalid");
+
+                            $.ajax({
+                                type: "GET",
+                        
+                                url:  "api/request/no/" + noInput.value + "/year/" + dateInput.value.split("-")[0],
+                        
+                                success: function () {
+                                    dateInput.classList.add("is-invalid");
+                                    $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                    noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                    noInput.classList.add("is-invalid");
+                                    $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                    $(submit).removeAttr("disabled");
+                                    $(submit).val("Create");
+                                },
+                    
+                                error: function () {
+                                    dateInput.classList.add("is-valid");
+                                    $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                    noInput.classList.add("is-valid");
+                                    $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                    $(submit).removeAttr("disabled");
+                                    $(submit).val("Create");
+                                }
+                            });
+
+                        }, doneTypingInterval);
+
+                    } else if (parseInt(inputtedMonth) === parseInt(currentMonth)) {
+                        if (parseInt(inputtedDay) <= parseInt(currentDay)) {
+                            window.clearTimeout(typingTimer);
+
+                            $(submit).attr("disabled", "true");
+                            $(submit).val("Loading");
+
+                            dateInput.classList.remove("is-invalid");
+                            dateInput.classList.remove("is-valid");
+                            noInput.classList.remove("is-invalid");
+                            noInput.classList.remove("is-valid");
+
+                            typingTimer = setTimeout(function () {
+                                dateInput.classList.remove("is-valid");
+                                dateInput.classList.remove("is-invalid");
+
+                                $.ajax({
+                                    type: "GET",
+                            
+                                    url:  "api/request/no/" + noInput.value + "/year/" + dateInput.value.split("-")[0],
+                            
+                                    success: function () {
+                                        dateInput.classList.add("is-invalid");
+                                        $(dateInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in this date year.");
+                                        noInput.setAttribute("pattern", "(?=" + noRegexString + ")(?=(?!" + noInput.value + ")).*");
+                                        noInput.classList.add("is-invalid");
+                                        $(noInput).closest(".form-group").find(".invalid-feedback").html("Request number already exist in the specified date year.");
+
+                                        $(submit).removeAttr("disabled");
+                                        $(submit).val("Create");
+                                    },
+                        
+                                    error: function () {
+                                        dateInput.classList.add("is-valid");
+                                        $(dateInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                                        noInput.classList.add("is-valid");
+                                        $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                                        $(submit).removeAttr("disabled");
+                                        $(submit).val("Create");
+                                    }
+                                });
+
+                            }, doneTypingInterval);
+
+                        } else {
+                            noInput.classList.add("is-valid");
+                            $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                        }
+
+                    } else {
+                        noInput.classList.add("is-valid");
+                        $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                    }
+
+                } else if (parseInt(inputtedYear) < 2015) {
+                    noInput.classList.add("is-valid");
+                    $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+
+                } else if (parseInt(inputtedYear) > parseInt(currentYear)) {
+                    noInput.classList.add("is-valid");
+                    $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+                }   
+
+            } else if (!dateInput.value) {
+                noInput.classList.add("is-valid");
+                $(noInput).closest(".form-group").find(".valid-feedback").html("Looks good.");
+            }
+
+
+        } else {
+            if (dateRegex.test(dateInput.value) === true) {
+                noInput.classList.add("is-invalid");
+                $(noInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");
+
+            } else if (!dateInput.value) {
+                noInput.classList.add("is-invalid");
+                $(noInput).closest(".form-group").find(".invalid-feedback").html("Value must follow the required format.");
             }
         }
     });
 
-    const resultFormGroup = modal.querySelector(".crt-rq-re");
-    const ratingFormGroup = modal.querySelector(".crt-rq-ra");
-    resultFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
-        if ((checkbox.value == 0) && (checkbox.checked == true)) {
-            $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("disabled", false);
+    [officeInput, modeInput, natureInput, technicianInput].forEach((input) => {
+        input.addEventListener("click", () => {
+            selectInputChange = true;
+        });
+    });
 
+    const resultFormGroup = form.querySelector(".crt-rq-re");
+    const ratingFormGroup = form.querySelector(".crt-rq-ra");
+    resultFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
+        ratingFormControl = ratingFormGroup.querySelector(".form-control");
+        if ((checkbox.value == 0) && (checkbox.checked == true)) {
+            ratingFormControl.querySelectorAll(".form-check-input").forEach((checkbox) => {
+                $(checkbox).attr("required", true);
+
+                checkbox.checked = false;
+            });
+            $(ratingFormControl).attr("required", "required");
 
         } else if ((checkbox.value == 1) && (checkbox.checked == true)) {
-            ratingFormGroup.querySelector("input").setAttribute("disabled", true);
+            $(ratingFormControl).addClass("bg-light");
+            $(ratingFormControl).css("pointer-events", "none");
 
-            ratingFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
-                checkbox.checked = false;
-            });
+            ratingFormControl.querySelector("#crtrq_rating_input-5").checked = true;
+
         } else if ((checkbox.value == 2) && (checkbox.checked == true)) {
-            $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("disabled", true);
-
-            ratingFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
-                checkbox.checked = false;
-            });
+            $(ratingFormControl).addClass("bg-light");
+            $(ratingFormControl).css("pointer-events", "none");
+            
+            ratingFormControl.querySelector("#crtrq_rating_input-5").checked = true;
+        
+        } else {
+            $(ratingFormControl).addClass("bg-light");
+            $(ratingFormControl).css("pointer-events", "none");
         }
 
         checkbox.addEventListener("click", (e) => {
             if (e.currentTarget.value == 0) {
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("disabled", false);
+                $(ratingFormControl).removeClass("bg-light");
+                $(ratingFormControl).css("pointer-events", "all");
 
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("required", true);
+                ratingFormControl.querySelectorAll(".form-check-input").forEach((checkbox) => {
+                    $(checkbox).attr("required", true);
+
+                    checkbox.checked = false;
+                });
 
             } else if (e.currentTarget.value == 1) {
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("disabled", true);
+                $(ratingFormControl).addClass("bg-light");
+                $(ratingFormControl).css("pointer-events", "none");
 
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("required", false);
-
-                ratingFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
+                ratingFormControl.querySelector("#crtrq_rating_input-5").checked = true;
+                
             } else if (e.currentTarget.value == 2) {
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("disabled", true);
+                $(ratingFormControl).addClass("bg-light");
+                $(ratingFormControl).css("pointer-events", "none");
 
-                $(ratingFormGroup.querySelectorAll(".form-check-input")).attr("required", false);
-
-                ratingFormGroup.querySelectorAll(".form-check-input").forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
+                ratingFormControl.querySelector("#crtrq_rating_input-5").checked = true;
             }
+
+            selectInputChange = true;
         });
     });
 
-    $(modal).on("show.bs.modal", function (e) {
-        $(toggle).hide();
+    modalFooter = modal.querySelector(".modal-footer"); 
+    closeWarning = modalFooter.querySelector("span");
+    closeActionCont = modalFooter.querySelector(".mdl-cls-final");
+    modalFormActionCont = modalFooter.querySelector(".mdl-frm-aa");
+    
+    modalCancelActionBtn = modalFormActionCont.querySelector(".btn-secondary");
+    cancelExitBtn = closeActionCont.querySelector(".btn-outline-danger");
+
+    $(modalCancelActionBtn).on("click", function() {
+        if (noInput.value || dateInput.value || detailInput.value || selectInputChange || photoInputChange) {
+            $(formBody).addClass("bg-light");
+            $(formBody).find("input").css("opacity", "0.5");
+            $(formBody).find("textarea").css("opacity", "0.5");
+            $(formBody).find("select").css("opacity", "0.5");
+            $(formBody).css("pointer-events", "none");
+
+            modalFooter.classList.add("d-flex", "justify-content-between");
+            modalFormActionCont.classList.remove("d-block");
+            modalFormActionCont.classList.add("d-none");
+            closeWarning.classList.remove("d-none");
+            closeWarning.classList.add("d-block");
+            closeActionCont.classList.remove("d-none");
+            closeActionCont.classList.add("d-block");
+
+        } else {
+            $(modal).modal("hide");
+        }
+    });
+
+    $(cancelExitBtn).on("click", function() {
+        $(formBody).removeClass("bg-light");
+        $(formBody).find("input").css("opacity", "1");
+        $(formBody).find("textarea").css("opacity", "1");
+        $(formBody).find("select").css("opacity", "1");
+        $(formBody).css("pointer-events", "all");
+
+        modalFooter.classList.remove("d-flex", "justify-content-between");
+        modalFormActionCont.classList.add("d-block");
+        modalFormActionCont.classList.remove("d-none");
+        closeWarning.classList.add("d-none");
+        closeWarning.classList.remove("d-block");
+        closeActionCont.classList.add("d-none");
+        closeActionCont.classList.remove("d-block");
+    });
+
+    $(modal).on("show.bs.modal", function () {
+        $(toggle).hide(); 
+    });
+
+    $(modal).on("hide.bs.modal", function () {
+        photoDisposePrompt.click();
+
+        $(formBody).removeClass("bg-light");
+        $(formBody).find("input").css("opacity", "1");
+        $(formBody).find("textarea").css("opacity", "1");
+        $(formBody).find("select").css("opacity", "1");
+        $(formBody).css("pointer-events", "all");
+
+        selectInputChange = false;
+
+        noInput.value = "";
+        dateInput.value = "";
+        officeInput.selectedIndex = "0";
+        modeInput.selectedIndex = "0";
+        natureInput.selectedIndex = "0";
+        technicianInput.value = "";
+        detailInput.value = "";
+
+        resultFormGroup.querySelectorAll("input").forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+
+        ratingFormGroup.querySelectorAll("input").forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+
+        form.querySelectorAll(".is-valid").forEach((input) => {
+            input.classList.remove("is-valid");
+        });
+
+        form.querySelectorAll(".is-invalid").forEach((input) => {
+            input.classList.remove("is-invalid");
+            input.removeAttribute("placeholder");
+        });
+
+        modalFooter.classList.remove("d-flex", "justify-content-between");
+        modalFormActionCont.classList.add("d-block");
+        modalFormActionCont.classList.remove("d-none");
+        closeWarning.classList.add("d-none");
+        closeWarning.classList.remove("d-block");
+        closeActionCont.classList.add("d-none");
+        closeActionCont.classList.remove("d-block");
     });
     
     $(modal).on("hidden.bs.modal", function () {
-        $(toggle).show();
+        $(toggle).show(); 
     });
 });
 

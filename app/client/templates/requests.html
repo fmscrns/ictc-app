@@ -186,6 +186,18 @@
             <div class="rq-li-re w-100 d-flex text-center justify-content-center align-items-center"></div>
             <div class="rq-li-ra w-100 d-flex text-center justify-content-center align-items-center"></div>
         </div>
+        <div class="rq-ld-sp mt-3 d-none">
+            <div class="d-flex align-items-center justify-content-center">
+                 <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                 </div>
+            </div>
+        </div>
+        <div class="rq-lg-empty mt-3 d-none">
+            <div class="d-flex align-items-center justify-content-center">
+                    No requests found.
+            </div>
+        </div>
     </div>
 {% endblock content %}
 
@@ -205,119 +217,125 @@
                 </div>
                 <div class="modal-body">
                     <div class="crt-rq-pf form-group">
-                        <div class="drop-zone rounded">
-                            {{ createRequestForm.photo_fn_input(class="position-absolute", accept=".jpg, .jpeg, .png") }}
+                        <div class="drop-zone border rounded">
+                            <div class="position-absolute">
+                                {{ createRequestForm.crtrq_photo_fn_input(class="small", accept=".jpg, .jpeg, .png") }}
+                            </div>
                             <small class="text-muted drop-zone__prompt d-flex flex-row">
                                 <img class="prompt__load-photo mx-2" src="{{ url_for('static', filename='assets/file-upload.svg') }}">
                                 <img class="prompt__dispose-photo mx-2 d-none" src="{{ url_for('static', filename='assets/file-dispose.svg') }}">
                             </small>
                         </div>
-                        {% if createRequestForm.photo_fn_input.errors %}
+                        {% if createRequestForm.crtrq_photo_fn_input.errors %}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.photo_fn_input.errors %}
+                                {% for error in createRequestForm.crtrq_photo_fn_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
-                    <div class="crt-rq-no fg-md form-group">
-                        {{ createRequestForm.no_input.label }}
-                        {% if createRequestForm.no_input.errors %}
-                            {{ createRequestForm.no_input(class="form-control form-control-sm is-invalid", pattern="([1-9]|1[012])-([1-9]|([1-9][0-9]))+") }}
+                    <div class="crt-rq-da fg-md form-group">
+                        {{ createRequestForm.crtrq_date_input.label }}
+                        {% if createRequestForm.crtrq_date_input.errors %}
+                            {{ createRequestForm.crtrq_date_input(class="form-control form-control-sm is-invalid", min="2015-01-01", max="") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.no_input.errors %}
+                                {% for error in createRequestForm.crtrq_date_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
+                            <div class="valid-feedback"></div>
                         {% else %}
-                            {{ createRequestForm.no_input(class="form-control form-control-sm", pattern="([1-9]|1[012])-([1-9]|([1-9][0-9]))+") }}
+                            {{ createRequestForm.crtrq_date_input(class="form-control form-control-sm", min="2015-01-01", max="") }}
                             <div class="invalid-feedback"></div>
                             <div class="valid-feedback"></div>
                         {% endif %}
                     </div>
-                    <div class="crt-rq-da fg-md form-group">
-                        {{ createRequestForm.date_input.label }}
-                        {% if createRequestForm.date_input.errors %}
-                            {{ createRequestForm.date_input(class="custom-select custom-select-sm is-invalid", pattern="([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))") }}
+                    <div class="crt-rq-no fg-md form-group">
+                        {{ createRequestForm.crtrq_no_input.label }}
+                        {% if createRequestForm.crtrq_no_input.errors %}
+                            {{ createRequestForm.crtrq_no_input(class="form-control form-control-sm is-invalid", pattern="([1-9]|1[012])-[1-9]|[1-9]^[0-9]") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.date_input.errors %}
+                                {% for error in createRequestForm.crtrq_no_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
+                            <div class="valid-feedback"></div>
                         {% else %}
-                            {{ createRequestForm.date_input(class="form-control form-control-sm", pattern="([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))") }}
+                            {{ createRequestForm.crtrq_no_input(class="form-control form-control-sm", pattern="([1-9]|1[012])-[1-9]|[1-9]^[0-9]") }}
+                            <div class="invalid-feedback"></div>
+                            <div class="valid-feedback"></div>
                         {% endif %}
                     </div>
                     <div class="crt-rq-o fg-md form-group">
-                        {{ createRequestForm.office_input.label }}
-                        {% if createRequestForm.office_input.errors %}
-                            {{ createRequestForm.office_input(class="custom-select custom-select-sm is-invalid") }}
+                        {{ createRequestForm.crtrq_office_input.label }}
+                        {% if createRequestForm.crtrq_office_input.errors %}
+                            {{ createRequestForm.crtrq_office_input(class="custom-select custom-select-sm is-invalid") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.office_input.errors %}
+                                {% for error in createRequestForm.crtrq_office_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ createRequestForm.office_input(class="form-control form-control-sm") }}
+                            {{ createRequestForm.crtrq_office_input(class="form-control form-control-sm") }}
                         {% endif %}
                     </div>
                     <div class="crt-rq-m fg-md form-group">
-                        {{ createRequestForm.mode_input.label }}
-                        {% if createRequestForm.mode_input.errors %}
-                            {{ createRequestForm.mode_input(class="custom-select custom-select-sm is-invalid") }}
+                        {{ createRequestForm.crtrq_mode_input.label }}
+                        {% if createRequestForm.crtrq_mode_input.errors %}
+                            {{ createRequestForm.crtrq_mode_input(class="custom-select custom-select-sm is-invalid") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.mode_input.errors %}
+                                {% for error in createRequestForm.crtrq_mode_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ createRequestForm.mode_input(class="form-control form-control-sm") }}
+                            {{ createRequestForm.crtrq_mode_input(class="form-control form-control-sm") }}
                         {% endif %}
                     </div>
                     <div class="crt-rq-na fg-md form-group">
-                        {{ createRequestForm.nature_input.label }}
-                        {% if createRequestForm.nature_input.errors %}
-                            {{ createRequestForm.nature_input(class="custom-select custom-select-sm is-invalid") }}
+                        {{ createRequestForm.crtrq_nature_input.label }}
+                        {% if createRequestForm.crtrq_nature_input.errors %}
+                            {{ createRequestForm.crtrq_nature_input(class="custom-select custom-select-sm is-invalid") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.nature_input.errors %}
+                                {% for error in createRequestForm.crtrq_nature_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ createRequestForm.nature_input(class="form-control form-control-sm") }}
+                            {{ createRequestForm.crtrq_nature_input(class="form-control form-control-sm") }}
                         {% endif %}
                     </div>
                     <div class="crt-rq-de fg-lg form-group">
-                        {{ createRequestForm.detail_input.label }}
-                        {% if createRequestForm.detail_input.errors %}
-                            {{ createRequestForm.detail_input(class="form-control form-control-sm is-invalid") }}
+                        {{ createRequestForm.crtrq_detail_input.label }}
+                        {% if createRequestForm.crtrq_detail_input.errors %}
+                            {{ createRequestForm.crtrq_detail_input(class="form-control form-control-sm is-invalid") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.detail_input.errors %}
+                                {% for error in createRequestForm.crtrq_detail_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ createRequestForm.detail_input(class="form-control form-control-sm") }}
+                            {{ createRequestForm.crtrq_detail_input(class="form-control form-control-sm") }}
                         {% endif %}
                     </div>
                     <div class="crt-rq-t fg-xlg form-group">
-                        {{ createRequestForm.technician_input.label }}
-                        {% if createRequestForm.technician_input.errors %}
-                            {{ createRequestForm.technician_input(class="custom-select custom-select-sm is-invalid") }}
+                        {{ createRequestForm.crtrq_technician_input.label }}
+                        {% if createRequestForm.crtrq_technician_input.errors %}
+                            {{ createRequestForm.crtrq_technician_input(class="custom-select custom-select-sm is-invalid") }}
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.technician_input.errors %}
+                                {% for error in createRequestForm.crtrq_technician_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ createRequestForm.technician_input(class="form-control form-control-sm") }}
+                            {{ createRequestForm.crtrq_technician_input(class="form-control form-control-sm") }}
                         {% endif %}
                     </div>
                     <div class="crt-rq-re fg-md form-group">
-                        {{ createRequestForm.result_input.label }}
-                        {% if createRequestForm.result_input.errors %}
+                        {{ createRequestForm.crtrq_result_input.label }}
+                        {% if createRequestForm.crtrq_result_input.errors %}
                             <div class="form-control form-control-sm is-invalid">
-                                {% for subfield in createRequestForm.result_input %}
+                                {% for subfield in createRequestForm.crtrq_result_input %}
                                     <div class="form-check form-check-inline small">
                                         {{ subfield(class="form-check-input", required=true) }}
                                         {{ subfield.label(class="form-check-label") }}
@@ -325,13 +343,13 @@
                                 {% endfor %}
                             </div>
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.result_input.errors %}
+                                {% for error in createRequestForm.crtrq_result_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
                             <div class="form-control form-control-sm">
-                                {% for subfield in createRequestForm.result_input %}
+                                {% for subfield in createRequestForm.crtrq_result_input %}
                                     <div class="form-check form-check-inline small">
                                         {{ subfield(class="form-check-input", required=true) }}
                                         {{ subfield.label(class="form-check-label") }}
@@ -341,26 +359,26 @@
                         {% endif %}
                     </div>
                     <div class="crt-rq-ra fg-md form-group">
-                        {{ createRequestForm.rating_input.label }}
-                        {% if createRequestForm.rating_input.errors %}
+                        {{ createRequestForm.crtrq_rating_input.label }}
+                        {% if createRequestForm.crtrq_rating_input.errors %}
                             <div class="form-control form-control-sm is-invalid">
-                                {% for subfield in createRequestForm.rating_input %}
+                                {% for subfield in createRequestForm.crtrq_rating_input %}
                                     <div class="form-check form-check-inline small">
-                                        {{ subfield(class="form-check-input", disabled=true) }}
+                                        {{ subfield(class="form-check-input") }}
                                         {{ subfield.label(class="form-check-label") }}
                                     </div>
                                 {% endfor %}
                             </div>
                             <div class="invalid-feedback">
-                                {% for error in createRequestForm.rating_input.errors %}
+                                {% for error in createRequestForm.crtrq_rating_input.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
                         {% else %}
                             <div class="form-control form-control-sm">
-                                {% for subfield in createRequestForm.rating_input %}
+                                {% for subfield in createRequestForm.crtrq_rating_input %}
                                     <div class="form-check form-check-inline small">
-                                        {{ subfield(class="form-check-input", disabled=true) }}
+                                        {{ subfield(class="form-check-input") }}
                                         {{ subfield.label(class="form-check-label") }}
                                     </div>
                                 {% endfor %}
@@ -369,10 +387,55 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    {{ createRequestForm.submit_input(class="btn btn-primary") }}
+                    <div class="mdl-frm-aa">
+                        <button type="button" class="btn btn-secondary btn-sm small mr-1">Close</button>
+                        {{ createRequestForm.crtrq_submit_input(class="btn btn-primary btn-sm small ml-1") }}
+                    </div>
+                    <span class="d-none text-danger small">This will erase all you have inputted. Continue?</span>
+                    <div class="mdl-cls-final d-none">
+                        <button type="button" class="btn btn-outline-danger btn-sm small mr-1">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm small ml-1" data-dismiss="modal">Exit</button>
+                    </div>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="modal fade" id="mng-offc-mdl" data-backdrop="static" data-keyboard="false" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Manage offices</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <form method="POST" action="" class="list-group-item d-flex flex-row">
+                            {{ createOfficeForm.hidden_tag() }}
+                            {% if createOfficeForm.crtof_name_input.errors %}
+                                {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm is-invalid") }}
+                            {% else %}
+                                {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm") }}
+                            {% endif %}
+                            {{ createOfficeForm.crtof_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
+                        </form>
+                        <li id="mng-offc-mdl-i" class="d-flex align-items-center justify-content-between">
+                            <span></span>
+                            <div class="d-flex flex-row ml-5">
+                                <button type="button" class="btn btn-secondary btn-sm mr-1 d-flex align-items-center justify-content-center">
+                                    {#<img src="{{ url_for('static', filename='assets/edit.svg') }}" style="width:15px;">#}
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm ml-1 d-flex align-items-center justify-content-center">
+                                    {#<img src="{{ url_for('static', filename='assets/delete.svg') }}" style="width:15px;">#}
+                                    Delete
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal fade" id="mng-md-mdl" data-backdrop="static" data-keyboard="false" tabindex="-1">
@@ -386,10 +449,15 @@
                 </div>
                 <div class="modal-body p-0">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex flex-row">
-                            <input class="form-control form-control-sm">
-                            <button type="button" class="btn btn-primary btn-sm ml-2 px-5">Create</button>
-                        </li>
+                        <form method="POST" action="" class="list-group-item d-flex flex-row">
+                            {{ createModeForm.hidden_tag() }}
+                            {% if createModeForm.crtmd_name_input.errors %}
+                                {{ createModeForm.crtmd_name_input(class="form-control form-control-sm is-invalid") }}
+                            {% else %}
+                                {{ createModeForm.crtmd_name_input(class="form-control form-control-sm") }}
+                            {% endif %}
+                            {{ createModeForm.crtmd_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
+                        </form>
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Walk-in</span>
                             <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
@@ -407,21 +475,26 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="mng-ntr-mdl" tabindex="-1">
+    <div class="modal fade" id="mng-ntr-mdl" data-backdrop="static" data-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Manage</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Manage natures</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
             <div class="modal-body p-0">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex flex-row">
-                        <input class="form-control form-control-sm">
-                        <button type="button" class="btn btn-primary btn-sm ml-2 px-5">Create</button>
-                    </li>
+                    <form method="POST" action="" class="list-group-item d-flex flex-row">
+                        {{ createNatureForm.hidden_tag() }}
+                        {% if createNatureForm.crtnt_name_input.errors %}
+                            {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm is-invalid") }}
+                        {% else %}
+                            {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm") }}
+                        {% endif %}
+                        {{ createNatureForm.crtnt_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
+                    </form>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Internet</span>
                         <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
@@ -439,53 +512,26 @@
         </div>
         </div>
     </div>
-    <div class="modal fade" id="mng-offc-mdl" tabindex="-1">
+    <div class="modal fade" id="mng-tch-mdl" data-backdrop="static" data-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Manage offices</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Manage technicians</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
             <div class="modal-body p-0">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex flex-row">
-                        <input class="form-control form-control-sm">
-                        <button type="button" class="btn btn-primary btn-sm ml-2 px-5">Create</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>City registrar's office</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>City legal office</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>City engineer's office</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        </div>
-    </div>
-    <div class="modal fade" id="mng-tch-mdl" tabindex="-1">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Manage</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body p-0">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex flex-row">
-                        <input class="form-control form-control-sm">
-                        <button type="button" class="btn btn-primary btn-sm ml-2 px-5">Create</button>
-                    </li>
+                    <form method="POST" action="" class="list-group-item d-flex flex-row">
+                        {{ createTechnicianForm.hidden_tag() }}
+                        {% if createTechnicianForm.crttc_name_input.errors %}
+                            {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm is-invalid") }}
+                        {% else %}
+                            {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm") }}
+                        {% endif %}
+                        {{ createTechnicianForm.crttc_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
+                    </form>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Gino Mascariñas</span>
                         <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>

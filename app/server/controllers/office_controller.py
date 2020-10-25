@@ -16,3 +16,17 @@ class Office(Resource):
             return get_offices
 
         api.abort(get_offices)
+
+    @api.expect(_office, validate=True)
+    def post(self):
+        verify_office = OfficeService.verify(request.json)
+
+        if not isinstance(verify_office, int):
+            post_office = OfficeService.post(verify_office)
+
+            if not isinstance(post_office, int):
+                return post_office
+
+            api.abort(post_office)
+
+        api.abort(verify_office)

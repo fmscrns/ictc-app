@@ -8,8 +8,8 @@ from .server import create_server_bp
 
 db = SQLAlchemy()
 
-client_bp = create_client_bp()
 server_bp = create_server_bp()
+client_bp = create_client_bp()
 
 def create_app(config_name):
     app = Flask(__name__)

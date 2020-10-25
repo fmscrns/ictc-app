@@ -16,3 +16,17 @@ class Technician(Resource):
             return get_technicians
 
         api.abort(get_technicians)
+
+    @api.expect(_technician, validate=True)
+    def post(self):
+        verify_technician = TechnicianService.verify(request.json)
+
+        if not isinstance(verify_technician, int):
+            post_technician = TechnicianService.post(verify_technician)
+
+            if not isinstance(post_technician, int):
+                return post_technician
+
+            api.abort(post_technician)
+
+        api.abort(verify_technician)

@@ -4,7 +4,8 @@ class RequestDto:
     api = Namespace("request", path="/request")
 
     no_pattern = "([1-9]|1[012])-([1-9]|([1-9][0-9]))+"
-    date_pattern = "(\d{4}-\d{2}-\d{2} ([2][0-3]|[0-1][0-9]|[1-9]):[0-5][0-9]:([0-5][0-9]|[6][0]))"
+    # date_pattern = "(\d{4}-\d{2}-\d{2} ([2][0-3]|[0-1][0-9]|[1-9]):[0-5][0-9]:([0-5][0-9]|[6][0]))"
+    date_pattern = "\d{4}-\d{2}-\d{2}"
     photo_fn_pattern = "(.*/)*.+\.(png|jpg|jpeg|PNG|JPG|JPEG)"
     id_pattern = "[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}"
 
@@ -14,33 +15,33 @@ class RequestDto:
         "date": fields.String(dt_format="rfc822", required=True, pattern=date_pattern),
         "detail": fields.String(),
         "result": fields.Integer(required=True, min=0, max=2),
-        "rating": fields.Integer(),
+        "rating": fields.Integer(required=True, min=0, max=5),
         "photo_fn": fields.String(required=True, pattern=photo_fn_pattern),
-        "office": fields.Nested(
-            api.model("office", {
-                "id": fields.String(required=True, attribute="office_id", pattern=id_pattern),
-                "name": fields.String(attribute="office_name")
+        "client": fields.Nested(
+            api.model("client", {
+                "id": fields.String(required=True, attribute="client_id", pattern=id_pattern),
+                "name": fields.String(attribute="client_name")
             }), required = True
         ),
-        "mode": fields.Nested(
-            api.model("mode", {
-                "id": fields.String(required=True, attribute="mode_id", pattern=id_pattern),
-                "name": fields.String(attribute="mode_name")
+        "approach": fields.Nested(
+            api.model("approach", {
+                "id": fields.String(required=True, attribute="approach_id", pattern=id_pattern),
+                "name": fields.String(attribute="approach_name")
             }), required = True
         ),
-        "nature": fields.Nested(
-            api.model("nature", {
-                "id": fields.String(required=True, attribute="nature_id", pattern=id_pattern),
-                "name": fields.String(attribute="nature_name")
+        "type": fields.Nested(
+            api.model("type", {
+                "id": fields.String(required=True, attribute="type_id", pattern=id_pattern),
+                "name": fields.String(attribute="type_name")
             }), required = True
         ),
-        "technicians": fields.List(
+        "fixers": fields.List(
             fields.Nested(
-                api.model("technicians", {
-                    "id": fields.String(required=True, attribute="technician_id", pattern=id_pattern),
-                    "name": fields.String(attribute="technician_name")
-                })
-            ), required = True
+                api.model("fixer", {
+                    "id": fields.String(required=True, attribute="fixer_id", pattern=id_pattern),
+                    "name": fields.String(attribute="fixer_name")
+                }), required = True
+            ), min_items = 1
         )
     })
 

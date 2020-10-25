@@ -16,3 +16,17 @@ class Nature(Resource):
             return get_natures
 
         api.abort(get_natures)
+
+    @api.expect(_nature, validate=True)
+    def post(self):
+        verify_nature = NatureService.verify(request.json)
+
+        if not isinstance(verify_nature, int):
+            post_nature = NatureService.post(verify_nature)
+
+            if not isinstance(post_nature, int):
+                return post_nature
+
+            api.abort(post_nature)
+
+        api.abort(verify_nature)

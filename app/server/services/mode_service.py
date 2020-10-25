@@ -1,3 +1,4 @@
+import uuid
 from ... import db
 from ..models import ModeModel
 
@@ -19,6 +20,38 @@ class ModeService:
                 return modes
 
             return 404
+
+        except:
+            return 500
+
+    @staticmethod
+    def verify(data):
+        try:
+            verify_name = ModeModel.query.filter_by(name=data.get("name")).first()
+
+            if not verify_name:
+                return data
+
+            return 400
+
+        except:
+            return 500
+
+    @staticmethod
+    def post(data):
+        try:
+            pid = str(uuid.uuid4())
+
+            new_mode = ModeModel(
+                public_id = pid,
+                name = data.get("name")
+            )
+
+            db.session.add(new_mode)
+
+            db.session.commit()
+
+            return pid
 
         except:
             return 500
