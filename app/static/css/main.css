@@ -250,6 +250,11 @@ ul {
   width: 80px;
 }
 
+#mng-offc-mdl > .modal-dialog > .modal-content > .modal-header > div > button,
+#mng-offc-mdl > .modal-dialog > .modal-content > .modal-header > div > input {
+  width: 66.5px;
+}
+
 #mng-offc-mdl > .modal-dialog > .modal-content > .modal-body > .list-group {
   overflow: hidden;
 }
@@ -263,6 +268,69 @@ ul {
 }
 
 #mng-offc-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > div > button {
+  width: 66.5px;
+}
+
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-header > div > button,
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-header > div > input {
+  width: 66.5px;
+}
+
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-body > .list-group {
+  overflow: hidden;
+}
+
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > #mng-md-mdl-i {
+  display: none !important;
+}
+
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > span {
+  word-break: break-all !important;
+}
+
+#mng-md-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > div > button {
+  width: 66.5px;
+}
+
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-header > div > button,
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-header > div > input {
+  width: 66.5px;
+}
+
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-body > .list-group {
+  overflow: hidden;
+}
+
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > #mng-ntr-mdl-i {
+  display: none !important;
+}
+
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > span {
+  word-break: break-all !important;
+}
+
+#mng-ntr-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > div > button {
+  width: 66.5px;
+}
+
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-header > div > button,
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-header > div > input {
+  width: 66.5px;
+}
+
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-body > .list-group {
+  overflow: hidden;
+}
+
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > #mng-tch-mdl-i {
+  display: none !important;
+}
+
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > span {
+  word-break: break-all !important;
+}
+
+#mng-tch-mdl > .modal-dialog > .modal-content > .modal-body > .list-group > .list-group-item > div > button {
   width: 66.5px;
 }
 

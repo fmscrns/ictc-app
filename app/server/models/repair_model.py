@@ -5,6 +5,7 @@ class RepairModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     public_id = db.Column(db.String(100), unique=True, nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False)
 
     technician_fixer_id = db.Column(db.String, db.ForeignKey("technician.public_id"))
     request_task_id = db.Column(db.String, db.ForeignKey("request.public_id"))

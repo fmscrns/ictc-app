@@ -12,6 +12,7 @@ class RequestModel(db.Model):
     result = db.Column(db.Integer)
     rating = db.Column(db.Integer)
     photo_fn = db.Column(db.String(100))
+    registered_on = db.Column(db.DateTime, nullable=False)
 
     office_client_id = db.Column(db.String, db.ForeignKey("office.public_id"))
     mode_approach_id = db.Column(db.String, db.ForeignKey("mode.public_id"))

@@ -30,3 +30,21 @@ class Mode(Resource):
             api.abort(post_mode)
 
         api.abort(verify_mode)
+
+    @api.expect(_mode, validate=True)
+    def patch(self):
+        patch_mode = ModeService.patch(request.json)
+
+        if patch_mode == 200:
+            return patch_mode
+
+        api.abort(patch_mode)
+
+    @api.expect(_mode, validate=True)
+    def delete(self):
+        delete_mode = ModeService.delete(request.json)
+
+        if delete_mode == 200:
+            return delete_mode
+
+        api.abort(delete_mode)

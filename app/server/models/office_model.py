@@ -7,6 +7,7 @@ class OfficeModel(db.Model):
     public_id = db.Column(db.String(100), unique=True, nullable=False)
 
     name = db.Column(db.String(100))
+    registered_on = db.Column(db.DateTime, nullable=False)
 
     request_client_rel = db.relationship("RequestModel", backref="office", lazy="joined")
 

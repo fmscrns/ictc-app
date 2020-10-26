@@ -30,3 +30,21 @@ class Technician(Resource):
             api.abort(post_technician)
 
         api.abort(verify_technician)
+
+    @api.expect(_technician, validate=True)
+    def patch(self):
+        patch_technician = TechnicianService.patch(request.json)
+
+        if patch_technician == 200:
+            return patch_technician
+
+        api.abort(patch_technician)
+
+    @api.expect(_technician, validate=True)
+    def delete(self):
+        delete_technician = TechnicianService.delete(request.json)
+
+        if delete_technician == 200:
+            return delete_technician
+
+        api.abort(delete_technician)

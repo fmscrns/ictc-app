@@ -1,4 +1,4 @@
-import uuid
+import uuid, datetime
 from sqlalchemy import extract
 from ... import db
 from ..models import *
@@ -124,6 +124,7 @@ class RequestService:
                     result = data.get("result"),
                     rating = data.get("rating"),
                     photo_fn = data.get("photo_fn"),
+                    registered_on = datetime.datetime.utcnow(),
                     office_client_id = data.get("client")["id"],
                     mode_approach_id = data.get("approach")["id"],
                     nature_type_id = data.get("type")["id"]
@@ -136,6 +137,7 @@ class RequestService:
 
                     new_repair = RepairModel(
                         public_id = rep_pid,
+                        registered_on = datetime.datetime.utcnow(),
                         technician_fixer_id = fixer["id"],
                         request_task_id = req_pid
                     )

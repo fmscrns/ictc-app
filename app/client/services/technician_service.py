@@ -32,3 +32,41 @@ class TechnicianService:
 
         except:
             return 500
+
+    @staticmethod
+    def edit(data):
+        try:
+            edit_technician_resp = requests.patch(
+                "{}api/technician/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("edttc_id_input"),
+                    name = data.form.get("edttc_name_input")
+                )
+            )
+            
+            if edit_technician_resp.ok:
+                return json.loads(edit_technician_resp.text)
+
+            return edit_technician_resp.status_code
+
+        except:
+            return 500
+
+    @staticmethod
+    def delete(data):
+        try:
+            delete_technician_resp = requests.delete(
+                "{}api/technician/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("delttc_id_input"),
+                    name = data.form.get("delttc_name_input")
+                )
+            )
+            
+            if delete_technician_resp.ok:
+                return json.loads(delete_technician_resp.text)
+
+            return delete_technician_resp.status_code
+
+        except:
+            return 500

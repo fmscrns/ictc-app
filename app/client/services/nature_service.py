@@ -33,4 +33,42 @@ class NatureService:
         except:
             return 500
 
+    @staticmethod
+    def edit(data):
+        try:
+            edit_nature_resp = requests.patch(
+                "{}api/nature/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("edtnt_id_input"),
+                    name = data.form.get("edtnt_name_input")
+                )
+            )
+            
+            if edit_nature_resp.ok:
+                return json.loads(edit_nature_resp.text)
+
+            return edit_nature_resp.status_code
+
+        except:
+            return 500
+
+    @staticmethod
+    def delete(data):
+        try:
+            delete_nature_resp = requests.delete(
+                "{}api/nature/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("deltnt_id_input"),
+                    name = data.form.get("deltnt_name_input")
+                )
+            )
+            
+            if delete_nature_resp.ok:
+                return json.loads(delete_nature_resp.text)
+
+            return delete_nature_resp.status_code
+
+        except:
+            return 500
+
             

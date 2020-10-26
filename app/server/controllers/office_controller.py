@@ -7,7 +7,7 @@ api = OfficeDto.api
 _office = OfficeDto.office
 
 @api.route("/")
-class Office(Resource):
+class OfficeList(Resource):
     @api.marshal_list_with(_office, envelope="offices")
     def get(self):
         get_offices = OfficeService.get_all()
@@ -30,3 +30,21 @@ class Office(Resource):
             api.abort(post_office)
 
         api.abort(verify_office)
+
+    @api.expect(_office, validate=True)
+    def patch(self):
+        patch_office = OfficeService.patch(request.json)
+
+        if patch_office == 200:
+            return patch_office
+
+        api.abort(patch_office)
+
+    @api.expect(_office, validate=True)
+    def delete(self):
+        delete_office = OfficeService.delete(request.json)
+
+        if delete_office == 200:
+            return delete_office
+
+        api.abort(delete_office)

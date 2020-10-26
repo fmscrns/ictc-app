@@ -290,6 +290,7 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
 
                     let item = $(manageListGroup.querySelector("#mng-offc-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
 
+                    item.attr("data-id", office["id"]);
                     item.find("span").html(office["name"]);
 
                     item.appendTo(manageListGroup);
@@ -303,6 +304,10 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
     container.querySelectorAll(".rq-tb-m").forEach((modeCont) => {
         const listGroup = document.querySelector(".rq-lg");
         const modeOption = modeCont.querySelector(".tb-opt-cont");
+
+        const manageBtn = modeCont.querySelector("button");
+        const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
+        const manageListGroup = manageModal.querySelector("ul");
 
         $.ajax({
             type: "GET",
@@ -321,6 +326,13 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                     });
 
                     modeOption.append(option);
+
+                    let item = $(manageListGroup.querySelector("#mng-md-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+
+                    item.attr("data-id", mode["id"]);
+                    item.find("span").html(mode["name"]);
+
+                    item.appendTo(manageListGroup);
                 }
             }
         });
@@ -329,6 +341,10 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
     container.querySelectorAll(".rq-tb-na").forEach((natureCont) => {
         const listGroup = document.querySelector(".rq-lg");
         const natureOption = natureCont.querySelector(".tb-opt-cont");
+
+        const manageBtn = natureCont.querySelector("button");
+        const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
+        const manageListGroup = manageModal.querySelector("ul");
 
         $.ajax({
             type: "GET",
@@ -347,6 +363,13 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                     });
 
                     natureOption.append(option);
+
+                    let item = $(manageListGroup.querySelector("#mng-ntr-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+
+                    item.attr("data-id", nature["id"]);
+                    item.find("span").html(nature["name"]);
+
+                    item.appendTo(manageListGroup);
                 }
             }
         });
@@ -355,6 +378,10 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
     container.querySelectorAll(".rq-tb-t").forEach((technicianCont) => {
         const listGroup = document.querySelector(".rq-lg");
         const technicianOption = technicianCont.querySelector(".tb-opt-cont");
+
+        const manageBtn = technicianCont.querySelector("button");
+        const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
+        const manageListGroup = manageModal.querySelector("ul");
 
         $.ajax({
             type: "GET",
@@ -373,6 +400,13 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                     });
 
                     technicianOption.append(option);
+
+                    let item = $(manageListGroup.querySelector("#mng-tch-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+
+                    item.attr("data-id", technician["id"]);
+                    item.find("span").html(technician["name"]);
+
+                    item.appendTo(manageListGroup);
                 }
             }
         });
@@ -1108,6 +1142,314 @@ document.querySelectorAll(".frcr-cnt").forEach((toggle) => {
         $(toggle).show(); 
     });
 });
+
+{
+    const modal = $("#mng-offc-mdl");
+    const modalBody = modal.find(".modal-body");
+    
+    const createForm = modal.find("#mdl-hdr-crtof");
+    const editForm = modal.find("#mdl-hdr-edtof");
+    const deleteForm = modal.find("#mdl-hdr-deltof");
+
+    function editOffice (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        editForm.removeClass("d-none");
+        editForm.addClass("d-flex flex-row");
+
+        let idInput = editForm.find("#edtof_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let officeName = $(obj).closest("li").find("span").html();
+
+        let nameInput = editForm.find("#edtof_name_input");
+        nameInput.attr("pattern", `^((?!(?<!\\S)${ officeName }(?!\\S)).*)$`);
+        nameInput.val(officeName);
+    } 
+
+    function deleteOffice (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        deleteForm.removeClass("d-none");
+        deleteForm.addClass("d-flex flex-row");
+
+        let idInput = deleteForm.find("#deltof_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let officeName = $(obj).closest("li").find("span").html();
+
+        let nameInput = deleteForm.find("#deltof_name_input");
+        nameInput.attr("pattern", `^(${ officeName })$`);
+        nameInput.attr("placeholder", officeName);
+    }
+
+    function createOffice (obj) {
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        let thisForm = $(obj).closest("form");
+        
+        thisForm.removeClass("d-flex flex-row");
+        thisForm.addClass("d-none");
+
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    }
+
+    modal.on("hide.bs.modal", function () {
+        createForm.trigger("reset");
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        editForm.removeClass("d-flex flex-row");
+        editForm.addClass("d-none");
+        deleteForm.removeClass("d-flex flex-row");
+        deleteForm.addClass("d-none");
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    });
+}
+
+{
+    const modal = $("#mng-md-mdl");
+    const modalBody = modal.find(".modal-body");
+
+    const createForm = modal.find("#mdl-hdr-crtmd");
+    const editForm = modal.find("#mdl-hdr-edtmd");
+    const deleteForm = modal.find("#mdl-hdr-deltmd");
+
+    function editMode (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        editForm.removeClass("d-none");
+        editForm.addClass("d-flex flex-row");
+
+        let idInput = editForm.find("#edtmd_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let modeName = $(obj).closest("li").find("span").html();
+
+        let nameInput = editForm.find("#edtmd_name_input");
+        nameInput.attr("pattern", `^((?!(?<!\\S)${ modeName }(?!\\S)).*)$`);
+        nameInput.val(modeName);
+    } 
+
+    function deleteMode (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        deleteForm.removeClass("d-none");
+        deleteForm.addClass("d-flex flex-row");
+
+        let idInput = deleteForm.find("#deltmd_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let modeName = $(obj).closest("li").find("span").html();
+
+        let nameInput = deleteForm.find("#deltmd_name_input");
+        nameInput.attr("pattern", `^(${ modeName })$`);
+        nameInput.attr("placeholder", modeName);
+    }
+
+    function createMode (obj) {
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        let thisForm = $(obj).closest("form");
+        
+        thisForm.removeClass("d-flex flex-row");
+        thisForm.addClass("d-none");
+
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    }
+
+    modal.on("hide.bs.modal", function () {
+        createForm.trigger("reset");
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        editForm.removeClass("d-flex flex-row");
+        editForm.addClass("d-none");
+        deleteForm.removeClass("d-flex flex-row");
+        deleteForm.addClass("d-none");
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    });
+}
+
+{
+    const modal = $("#mng-ntr-mdl");
+    const modalBody = modal.find(".modal-body");
+
+    const createForm = modal.find("#mdl-hdr-crtntr");
+    const editForm = modal.find("#mdl-hdr-edtntr");
+    const deleteForm = modal.find("#mdl-hdr-deltntr");
+
+    function editNature (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        editForm.removeClass("d-none");
+        editForm.addClass("d-flex flex-row");
+
+        let idInput = editForm.find("#edtnt_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let natureName = $(obj).closest("li").find("span").html();
+
+        let nameInput = editForm.find("#edtnt_name_input");
+        nameInput.attr("pattern", `^((?!(?<!\\S)${ natureName }(?!\\S)).*)$`);
+        nameInput.val(natureName);
+    } 
+
+    function deleteNature (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        deleteForm.removeClass("d-none");
+        deleteForm.addClass("d-flex flex-row");
+
+        let idInput = deleteForm.find("#deltnt_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let natureName = $(obj).closest("li").find("span").html();
+
+        let nameInput = deleteForm.find("#deltnt_name_input");
+        nameInput.attr("pattern", `^(${ natureName })$`);
+        nameInput.attr("placeholder", natureName);
+    }
+
+    function createNature (obj) {
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        let thisForm = $(obj).closest("form");
+        
+        thisForm.removeClass("d-flex flex-row");
+        thisForm.addClass("d-none");
+
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    }
+
+    modal.on("hide.bs.modal", function () {
+        createForm.trigger("reset");
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        editForm.removeClass("d-flex flex-row");
+        editForm.addClass("d-none");
+        deleteForm.removeClass("d-flex flex-row");
+        deleteForm.addClass("d-none");
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    });
+}
+
+{
+    const modal = $("#mng-tch-mdl");
+    const modalBody = modal.find(".modal-body");
+
+    const createForm = modal.find("#mdl-hdr-crttch");
+    const editForm = modal.find("#mdl-hdr-edttch");
+    const deleteForm = modal.find("#mdl-hdr-delttch");
+
+    function editTechnician (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        editForm.removeClass("d-none");
+        editForm.addClass("d-flex flex-row");
+
+        let idInput = editForm.find("#edttc_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let technicianName = $(obj).closest("li").find("span").html();
+
+        let nameInput = editForm.find("#edttc_name_input");
+        nameInput.attr("pattern", `^((?!(?<!\\S)${ technicianName }(?!\\S)).*)$`);
+        nameInput.val(technicianName);
+    } 
+
+    function deleteTechnician (obj) {
+        modalBody.css("pointer-events", "none");
+        modalBody.addClass("d-none");
+        createForm.removeClass("d-flex flex-row");
+        createForm.addClass("d-none");
+        deleteForm.removeClass("d-none");
+        deleteForm.addClass("d-flex flex-row");
+
+        let idInput = deleteForm.find("#delttc_id_input");
+        idInput.val($(obj).closest("li").attr("data-id"));
+
+        let technicianName = $(obj).closest("li").find("span").html();
+
+        let nameInput = deleteForm.find("#delttc_name_input");
+        nameInput.attr("pattern", `^(${ technicianName })$`);
+        nameInput.attr("placeholder", technicianName);
+    }
+
+    function createTechnician (obj) {
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        let thisForm = $(obj).closest("form");
+        
+        thisForm.removeClass("d-flex flex-row");
+        thisForm.addClass("d-none");
+
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    }
+
+    modal.on("hide.bs.modal", function () {
+        createForm.trigger("reset");
+        editForm.trigger("reset");
+        deleteForm.trigger("reset");
+
+        modalBody.css("pointer-events", "all");
+        modalBody.removeClass("d-none");
+
+        editForm.removeClass("d-flex flex-row");
+        editForm.addClass("d-none");
+        deleteForm.removeClass("d-flex flex-row");
+        deleteForm.addClass("d-none");
+        createForm.removeClass("d-none");
+        createForm.addClass("d-flex flex-row");
+    });
+}
 
 // COMPONENTS
 $(".alert-dismissible").fadeTo(5000, 500).slideUp(500, function (e) {

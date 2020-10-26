@@ -1,4 +1,4 @@
-import uuid
+import uuid, datetime
 from ... import db
 from ..models import NatureModel
 
@@ -13,6 +13,8 @@ class NatureService:
                 ) for nature in db.session.query(
                     NatureModel.public_id,
                     NatureModel.name
+                ).order_by(
+                    NatureModel.registered_on.asc()
                 ).all()
             ]
 
@@ -44,7 +46,8 @@ class NatureService:
 
             new_nature = NatureModel(
                 public_id = pid,
-                name = data.get("name")
+                name = data.get("name"),
+                registered_on = datetime.datetime.utcnow()
             )
 
             db.session.add(new_nature)
@@ -52,6 +55,42 @@ class NatureService:
             db.session.commit()
 
             return pid
+
+        except:
+            return 500
+
+    @staticmethod
+    def patch(data):
+        try:
+            nature = NatureModel.query.filter_by(public_id=data.get("id")).first()
+            nature = nature if not NatureModel.query.filter_by(name=data.get("name")).first() else None
+
+            if nature:
+                nature.name = data.get("name")
+
+                db.session.commit()
+
+                return 200
+
+            return 400
+
+        except:
+            return 500
+
+    @staticmethod
+    def delete(data):
+        try:
+            nature = NatureModel.query.filter_by(public_id=data.get("id")).first()
+            nature = nature if nature.name == data.get("name") else None
+
+            if nature:
+                db.session.delete(nature)
+
+                db.session.commit()
+
+                return 200
+
+            return 400
 
         except:
             return 500

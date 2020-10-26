@@ -401,34 +401,62 @@
         </div>
     </div>
     <div class="modal fade" id="mng-offc-mdl" data-backdrop="static" data-keyboard="false" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Manage offices</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                    <h5 class="modal-title">Manage offices</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="modal-body p-0">
+                <form method="POST" action="" id="mdl-hdr-crtof" class="modal-header d-flex flex-row pr-4">
+                    {{ createOfficeForm.hidden_tag() }}
+                    {% if createOfficeForm.crtof_name_input.errors %}
+                        {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    {{ createOfficeForm.crtof_submit_input(class="btn btn-primary btn-sm ml-4 px-5") }}
+                </form>
+                <form method="POST" action="" id="mdl-hdr-edtof" class="modal-header d-none pr-4">
+                    {{ editOfficeForm.hidden_tag() }}
+                    {{ editOfficeForm.edtof_id_input(class="d-none") }}
+                    {% if editOfficeForm.edtof_name_input.errors %}
+                        {{ editOfficeForm.edtof_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ editOfficeForm.edtof_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    <div class="d-flex flex-row ml-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="createOffice(this);">
+                            Cancel
+                        </button>
+                        {{ editOfficeForm.edtof_submit_input(class="btn btn-secondary btn-sm ml-1") }}
+                    </div>
+                </form>
+                <form method="POST" action="" id="mdl-hdr-deltof" class="modal-header d-none pr-4">
+                    {{ deleteOfficeForm.hidden_tag() }}
+                    {{ deleteOfficeForm.deltof_id_input(class="d-none") }}
+                    {% if deleteOfficeForm.deltof_name_input.errors %}
+                        {{ deleteOfficeForm.deltof_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ deleteOfficeForm.deltof_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    <div class="d-flex flex-row ml-4">
+                        <button type="button" class="btn btn-outline-danger btn-sm mr-1" onclick="createOffice(this);">
+                            Cancel
+                        </button>
+                        {{ deleteOfficeForm.deltof_submit_input(class="btn btn-danger btn-sm ml-1") }}
+                    </div>
+                </form>
+                <div class="modal-body p-0" style="overflow-y: scroll;">
                     <ul class="list-group list-group-flush">
-                        <form method="POST" action="" class="list-group-item d-flex flex-row">
-                            {{ createOfficeForm.hidden_tag() }}
-                            {% if createOfficeForm.crtof_name_input.errors %}
-                                {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm is-invalid") }}
-                            {% else %}
-                                {{ createOfficeForm.crtof_name_input(class="form-control form-control-sm") }}
-                            {% endif %}
-                            {{ createOfficeForm.crtof_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
-                        </form>
-                        <li id="mng-offc-mdl-i" class="d-flex align-items-center justify-content-between">
+                        <li id="mng-offc-mdl-i" class="d-flex align-items-center justify-content-between pr-2">
                             <span></span>
-                            <div class="d-flex flex-row ml-5">
-                                <button type="button" class="btn btn-secondary btn-sm mr-1 d-flex align-items-center justify-content-center">
-                                    {#<img src="{{ url_for('static', filename='assets/edit.svg') }}" style="width:15px;">#}
+                            <div class="d-flex flex-row ml-3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="editOffice(this);">
                                     Edit
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm ml-1 d-flex align-items-center justify-content-center">
-                                    {#<img src="{{ url_for('static', filename='assets/delete.svg') }}" style="width:15px;">#}
+                                <button type="button" class="btn btn-outline-danger btn-sm ml-1" onclick="deleteOffice(this);">
                                     Delete
                                 </button>
                             </div>
@@ -442,33 +470,62 @@
         <div class="modal-dialog modal-dialog-centemodal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Manage modes</h5>
+                    <h5 class="modal-title">Manage modes</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body p-0">
+                <form method="POST" action="" id="mdl-hdr-crtmd" class="modal-header d-flex flex-row pr-4">
+                    {{ createModeForm.hidden_tag() }}
+                    {% if createModeForm.crtmd_name_input.errors %}
+                        {{ createModeForm.crtmd_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ createModeForm.crtmd_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    {{ createModeForm.crtmd_submit_input(class="btn btn-primary btn-sm ml-4 px-5") }}
+                </form>
+                <form method="POST" action="" id="mdl-hdr-edtmd" class="modal-header d-none pr-4">
+                    {{ editModeForm.hidden_tag() }}
+                    {{ editModeForm.edtmd_id_input(class="d-none") }}
+                    {% if editModeForm.edtmd_name_input.errors %}
+                        {{ editModeForm.edtmd_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ editModeForm.edtmd_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    <div class="d-flex flex-row ml-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="createMode(this);">
+                            Cancel
+                        </button>
+                        {{ editModeForm.edtmd_submit_input(class="btn btn-secondary btn-sm ml-1") }}
+                    </div>
+                </form>
+                <form method="POST" action="" id="mdl-hdr-deltmd" class="modal-header d-none pr-4">
+                    {{ deleteModeForm.hidden_tag() }}
+                    {{ deleteModeForm.deltmd_id_input(class="d-none") }}
+                    {% if deleteModeForm.deltmd_name_input.errors %}
+                        {{ deleteModeForm.deltmd_name_input(class="form-control form-control-sm is-invalid") }}
+                    {% else %}
+                        {{ deleteModeForm.deltmd_name_input(class="form-control form-control-sm") }}
+                    {% endif %}
+                    <div class="d-flex flex-row ml-4">
+                        <button type="button" class="btn btn-outline-danger btn-sm mr-1" onclick="createMode(this);">
+                            Cancel
+                        </button>
+                        {{ deleteModeForm.deltmd_submit_input(class="btn btn-danger btn-sm ml-1") }}
+                    </div>
+                </form>
+                <div class="modal-body p-0" style="overflow-y: scroll;">
                     <ul class="list-group list-group-flush">
-                        <form method="POST" action="" class="list-group-item d-flex flex-row">
-                            {{ createModeForm.hidden_tag() }}
-                            {% if createModeForm.crtmd_name_input.errors %}
-                                {{ createModeForm.crtmd_name_input(class="form-control form-control-sm is-invalid") }}
-                            {% else %}
-                                {{ createModeForm.crtmd_name_input(class="form-control form-control-sm") }}
-                            {% endif %}
-                            {{ createModeForm.crtmd_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
-                        </form>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Walk-in</span>
-                            <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Phone</span>
-                            <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Email</span>
-                            <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
+                        <li id="mng-md-mdl-i" class="d-flex align-items-center justify-content-between pr-2">
+                            <span></span>
+                            <div class="d-flex flex-row ml-3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="editMode(this);">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm ml-1" onclick="deleteMode(this);">
+                                    Delete
+                                </button>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -479,33 +536,62 @@
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Manage natures</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <h5 class="modal-title">Manage natures</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body p-0">
+            <form method="POST" action="" id="mdl-hdr-crtntr" class="modal-header d-flex flex-row pr-4">
+                {{ createNatureForm.hidden_tag() }}
+                {% if createNatureForm.crtnt_name_input.errors %}
+                    {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                {{ createNatureForm.crtnt_submit_input(class="btn btn-primary btn-sm ml-4 px-5") }}
+            </form>
+            <form method="POST" action="" id="mdl-hdr-edtntr" class="modal-header d-none pr-4">
+                {{ editNatureForm.hidden_tag() }}
+                {{ editNatureForm.edtnt_id_input(class="d-none") }}
+                {% if editNatureForm.edtnt_name_input.errors %}
+                    {{ editNatureForm.edtnt_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ editNatureForm.edtnt_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                <div class="d-flex flex-row ml-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="createNature(this);">
+                        Cancel
+                    </button>
+                    {{ editNatureForm.edtnt_submit_input(class="btn btn-secondary btn-sm ml-1") }}
+                </div>
+            </form>
+            <form method="POST" action="" id="mdl-hdr-deltntr" class="modal-header d-none pr-4">
+                {{ deleteNatureForm.hidden_tag() }}
+                {{ deleteNatureForm.deltnt_id_input(class="d-none") }}
+                {% if deleteNatureForm.deltnt_name_input.errors %}
+                    {{ deleteNatureForm.deltnt_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ deleteNatureForm.deltnt_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                <div class="d-flex flex-row ml-4">
+                    <button type="button" class="btn btn-outline-danger btn-sm mr-1" onclick="createNature(this);">
+                        Cancel
+                    </button>
+                    {{ deleteNatureForm.deltnt_submit_input(class="btn btn-danger btn-sm ml-1") }}
+                </div>
+            </form>
+            <div class="modal-body p-0" style="overflow-y: scroll;">
                 <ul class="list-group list-group-flush">
-                    <form method="POST" action="" class="list-group-item d-flex flex-row">
-                        {{ createNatureForm.hidden_tag() }}
-                        {% if createNatureForm.crtnt_name_input.errors %}
-                            {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm is-invalid") }}
-                        {% else %}
-                            {{ createNatureForm.crtnt_name_input(class="form-control form-control-sm") }}
-                        {% endif %}
-                        {{ createNatureForm.crtnt_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
-                    </form>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Internet</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Software assistance</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Printer</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
+                    <li id="mng-ntr-mdl-i" class="d-flex align-items-center justify-content-between pr-2">
+                        <span></span>
+                        <div class="d-flex flex-row ml-3">
+                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="editNature(this);">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm ml-1" onclick="deleteNature(this);">
+                                Delete
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -516,33 +602,62 @@
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Manage technicians</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <h5 class="modal-title">Manage technicians</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body p-0">
+            <form method="POST" action="" id="mdl-hdr-crttch" class="modal-header d-flex flex-row pr-4">
+                {{ createTechnicianForm.hidden_tag() }}
+                {% if createTechnicianForm.crttc_name_input.errors %}
+                    {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                {{ createTechnicianForm.crttc_submit_input(class="btn btn-primary btn-sm ml-4 px-5") }}
+            </form>
+            <form method="POST" action="" id="mdl-hdr-edttch" class="modal-header d-none pr-4">
+                {{ editTechnicianForm.hidden_tag() }}
+                {{ editTechnicianForm.edttc_id_input(class="d-none") }}
+                {% if editTechnicianForm.edttc_name_input.errors %}
+                    {{ editTechnicianForm.edttc_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ editTechnicianForm.edttc_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                <div class="d-flex flex-row ml-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="createTechnician(this);">
+                        Cancel
+                    </button>
+                    {{ editTechnicianForm.edttc_submit_input(class="btn btn-secondary btn-sm ml-1") }}
+                </div>
+            </form>
+            <form method="POST" action="" id="mdl-hdr-delttch" class="modal-header d-none pr-4">
+                {{ deleteTechnicianForm.hidden_tag() }}
+                {{ deleteTechnicianForm.delttc_id_input(class="d-none") }}
+                {% if deleteTechnicianForm.delttc_name_input.errors %}
+                    {{ deleteTechnicianForm.delttc_name_input(class="form-control form-control-sm is-invalid") }}
+                {% else %}
+                    {{ deleteTechnicianForm.delttc_name_input(class="form-control form-control-sm") }}
+                {% endif %}
+                <div class="d-flex flex-row ml-4">
+                    <button type="button" class="btn btn-outline-danger btn-sm mr-1" onclick="createTechnician(this);">
+                        Cancel
+                    </button>
+                    {{ deleteTechnicianForm.delttc_submit_input(class="btn btn-danger btn-sm ml-1") }}
+                </div>
+            </form>
+            <div class="modal-body p-0" style="overflow-y: scroll;">
                 <ul class="list-group list-group-flush">
-                    <form method="POST" action="" class="list-group-item d-flex flex-row">
-                        {{ createTechnicianForm.hidden_tag() }}
-                        {% if createTechnicianForm.crttc_name_input.errors %}
-                            {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm is-invalid") }}
-                        {% else %}
-                            {{ createTechnicianForm.crttc_name_input(class="form-control form-control-sm") }}
-                        {% endif %}
-                        {{ createTechnicianForm.crttc_submit_input(class="btn btn-primary btn-sm ml-2 px-5") }}
-                    </form>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Gino Mascariñas</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Chuckie Razuman</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Jonas Serino</span>
-                        <button type="button" class="btn btn-outline-danger btn-sm ml-2 px-5">Delete</button>
+                    <li id="mng-tch-mdl-i" class="d-flex align-items-center justify-content-between pr-2">
+                        <span></span>
+                        <div class="d-flex flex-row ml-3">
+                            <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="editTechnician(this);">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm ml-1" onclick="deleteTechnician(this);">
+                                Delete
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </div>

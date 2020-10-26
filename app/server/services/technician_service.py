@@ -1,4 +1,4 @@
-import uuid
+import uuid, datetime
 from ... import db
 from ..models import TechnicianModel
 
@@ -13,6 +13,8 @@ class TechnicianService:
                 ) for technician in db.session.query(
                     TechnicianModel.public_id,
                     TechnicianModel.name
+                ).order_by(
+                    TechnicianModel.registered_on.asc()
                 ).all()
             ]
 
@@ -44,7 +46,8 @@ class TechnicianService:
 
             new_technician = TechnicianModel(
                 public_id = pid,
-                name = data.get("name")
+                name = data.get("name"),
+                registered_on = datetime.datetime.utcnow()
             )
 
             db.session.add(new_technician)
@@ -52,6 +55,42 @@ class TechnicianService:
             db.session.commit()
 
             return pid
+
+        except:
+            return 500
+
+    @staticmethod
+    def patch(data):
+        try:
+            technician = TechnicianModel.query.filter_by(public_id=data.get("id")).first()
+            technician = technician if not TechnicianModel.query.filter_by(name=data.get("name")).first() else None
+
+            if technician:
+                technician.name = data.get("name")
+
+                db.session.commit()
+
+                return 200
+
+            return 400
+
+        except:
+            return 500
+
+    @staticmethod
+    def delete(data):
+        try:
+            technician = TechnicianModel.query.filter_by(public_id=data.get("id")).first()
+            technician = technician if technician.name == data.get("name") else None
+
+            if technician:
+                db.session.delete(technician)
+
+                db.session.commit()
+
+                return 200
+
+            return 400
 
         except:
             return 500

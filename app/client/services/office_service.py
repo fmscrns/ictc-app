@@ -32,3 +32,41 @@ class OfficeService:
 
         except:
             return 500
+
+    @staticmethod
+    def edit(data):
+        try:
+            edit_office_resp = requests.patch(
+                "{}api/office/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("edtof_id_input"),
+                    name = data.form.get("edtof_name_input")
+                )
+            )
+            
+            if edit_office_resp.ok:
+                return json.loads(edit_office_resp.text)
+
+            return edit_office_resp.status_code
+
+        except:
+            return 500
+
+    @staticmethod
+    def delete(data):
+        try:
+            delete_office_resp = requests.delete(
+                "{}api/office/".format(request.url_root),
+                json= dict(
+                    id = data.form.get("deltof_id_input"),
+                    name = data.form.get("deltof_name_input")
+                )
+            )
+            
+            if delete_office_resp.ok:
+                return json.loads(delete_office_resp.text)
+
+            return delete_office_resp.status_code
+
+        except:
+            return 500

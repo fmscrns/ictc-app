@@ -30,3 +30,21 @@ class Nature(Resource):
             api.abort(post_nature)
 
         api.abort(verify_nature)
+
+    @api.expect(_nature, validate=True)
+    def patch(self):
+        patch_nature = NatureService.patch(request.json)
+
+        if patch_nature == 200:
+            return patch_nature
+
+        api.abort(patch_nature)
+
+    @api.expect(_nature, validate=True)
+    def delete(self):
+        delete_nature = NatureService.delete(request.json)
+
+        if delete_nature == 200:
+            return delete_nature
+
+        api.abort(delete_nature)

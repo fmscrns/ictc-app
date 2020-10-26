@@ -7,6 +7,7 @@ class NatureModel(db.Model):
     public_id = db.Column(db.String(100), unique=True, nullable=False)
 
     name = db.Column(db.String(100))
+    registered_on = db.Column(db.DateTime, nullable=False)
 
     request_type_rel = db.relationship("RequestModel", backref="nature", lazy="joined")
 
