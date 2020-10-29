@@ -12,7 +12,7 @@
             <div class="card container-fluid p-0 bg-dark text-white">
                 <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
                 <div class="card-img-overlay">
-                    <h3 class="card-title">September 8, 2020</h3>
+                    <h3 class="card-title">{{ current_date }}</h3>
                     <p class="card-text">Date today</p>
                 </div>
             </div>
@@ -21,7 +21,7 @@
             <div class="card container-fluid p-0 bg-dark text-white">
                 <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
                 <div class="card-img-overlay">
-                    <h3 class="card-title">130</h3>
+                    <h3 class="card-title">{{ request_count }}</h3>
                     <p class="card-text">Total requests</p>
                 </div>
             </div>
@@ -30,7 +30,7 @@
             <div class="card container-fluid p-0 bg-dark text-white">
                 <div class="card-img" style="background-image: url('{{ url_for('static', filename='images/sample.jpg') }}');"></div>
                 <div class="card-img-overlay">
-                    <h3 class="card-title">10</h3>
+                    <h3 class="card-title">{{ technician_count }}</h3>
                     <p class="card-text">Total technicians</p>
                 </div>
             </div>
@@ -44,16 +44,19 @@
                         <h3 class="font-weight-bold">
                             Performed services over the months
                         </h3>
-                        <button type="button" class="btn btn-outline-secondary btn-sm">
-                            By year
-                        </button>
+                        <div class="dropdown mb-2">
+                            <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                              <a class="dropdown-item"></a>
+                            </div>
+                        </div>
                     </div>
                     <div class="cs-dvd"></div>
                     <div class="cs-pst-d ct-chart ct-minor-seventh"></div>
                 </div>
             </div>
-            <div class="cs-sro card bg-light mt-2 col box-shadow">
-                <div class="card-body">
+            <div class="cs-sro card bg-light mt-2 col box-shadow" style="height:auto;">
+                <div class="card-body" style="height:auto;">
                     <h5 class="card-title mt-3 ml-3 font-weight-bold">Service requests per office</h5>
                     <div class="cs-dvd"></div>
                     <div class="cs-sro-d ct-chart ct-octave"></div>

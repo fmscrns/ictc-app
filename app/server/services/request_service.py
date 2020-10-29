@@ -1,11 +1,12 @@
 import uuid, datetime
 from sqlalchemy import extract
+from sqlalchemy.orm import exc
 from ... import db
 from ..models import *
 
 class RequestService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no):
         try:
             requests = [
                 dict(
@@ -61,15 +62,20 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+            return requests if requests else 404
+
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
@@ -154,7 +160,7 @@ class RequestService:
             return 500
 
     @staticmethod
-    def get_by_year(year):
+    def get_by_year(year, pagination_no):
         try:
             requests = [
                 dict(
@@ -211,19 +217,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_year_and_month(year, month):
+    def get_by_year_and_month(year, month, pagination_no):
         try:
             requests = [
                 dict(
@@ -281,44 +290,27 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+            return requests if requests else 404
+
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_newest():
+    def get_by_year_and_month_and_result(year, month, result, pagination_no):
         try:
-            request = db.session.query(
-                RequestModel.public_id,
-                RequestModel.no,
-                RequestModel.date,
-                RequestModel.detail,
-                RequestModel.result,
-                RequestModel.rating,
-                RequestModel.photo_fn,
-                OfficeModel.public_id,
-                OfficeModel.name,
-                ModeModel.public_id,
-                ModeModel.name,
-                NatureModel.public_id,
-                NatureModel.name
-            ).filter(
-                RequestModel.office_client_id == OfficeModel.public_id
-            ).filter(
-                RequestModel.mode_approach_id == ModeModel.public_id
-            ).filter(
-                RequestModel.nature_type_id == NatureModel.public_id
-            ).order_by(RequestModel.date.asc()).first()
-            
-            if request:
-                return dict(
+            requests = [
+                dict(
                     id = request[0],
                     no = request[1],
                     date = request[2],
@@ -350,80 +342,46 @@ class RequestService:
                             RepairModel.request_task_id == request[0]
                         ).all()
                     ]
-                )
+                ) for request in db.session.query(
+                    RequestModel.public_id,
+                    RequestModel.no,
+                    RequestModel.date,
+                    RequestModel.detail,
+                    RequestModel.result,
+                    RequestModel.rating,
+                    RequestModel.photo_fn,
+                    OfficeModel.public_id,
+                    OfficeModel.name,
+                    ModeModel.public_id,
+                    ModeModel.name,
+                    NatureModel.public_id,
+                    NatureModel.name
+                ).filter(
+                    RequestModel.office_client_id == OfficeModel.public_id,
+                    RequestModel.mode_approach_id == ModeModel.public_id,
+                    RequestModel.nature_type_id == NatureModel.public_id,
+                    extract("year", RequestModel.date) == year,
+                    extract("month", RequestModel.date) == month,
+                    RequestModel.result == result
+                ).order_by(
+                    RequestModel.date.desc(),
+                    RequestModel.no.desc()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
+            ]
 
+            return requests if requests else 404
+
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_oldest():
-        try:
-            request = db.session.query(
-                RequestModel.public_id,
-                RequestModel.no,
-                RequestModel.date,
-                RequestModel.detail,
-                RequestModel.result,
-                RequestModel.rating,
-                RequestModel.photo_fn,
-                OfficeModel.public_id,
-                OfficeModel.name,
-                ModeModel.public_id,
-                ModeModel.name,
-                NatureModel.public_id,
-                NatureModel.name
-            ).filter(
-                RequestModel.office_client_id == OfficeModel.public_id
-            ).filter(
-                RequestModel.mode_approach_id == ModeModel.public_id
-            ).filter(
-                RequestModel.nature_type_id == NatureModel.public_id
-            ).order_by(RequestModel.date.desc()).first()
-            
-            if request:
-                return dict(
-                    id = request[0],
-                    no = request[1],
-                    date = request[2],
-                    detail = request[3],
-                    result = request[4],
-                    rating = request[5],
-                    photo_fn = request[6],
-                    client = dict(
-                        client_id = request[7],
-                        client_name = request[8],
-                    ),
-                    approach = dict(
-                        approach_id = request[9],
-                        approach_name = request[10]
-                    ),
-                    type = dict(
-                        type_id = request[11],
-                        type_name = request[12]
-                    ),
-                    fixers = [
-                        dict(
-                            fixer_id = technician[0],
-                            fixer_name = technician[1]
-                        ) for technician in db.session.query(
-                            TechnicianModel.public_id,
-                            TechnicianModel.name
-                        ).filter(
-                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
-                            RepairModel.request_task_id == request[0]
-                        ).all()
-                    ]
-                )
-                
-            return 404
-
-        except:
-            return 500
-
-    @staticmethod
-    def get_by_office(office_id):
+    def get_by_office(office_id, pagination_no):
         try:
             requests = [
                 dict(
@@ -480,19 +438,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
-
+            
     @staticmethod
-    def get_by_mode(mode_id):
+    def get_by_mode(mode_id, pagination_no):
         try:
             requests = [
                 dict(
@@ -549,19 +510,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_nature(nature_id):
+    def get_by_nature(nature_id, pagination_no):
         try:
             requests = [
                 dict(
@@ -618,19 +582,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_technician(technician_id):
+    def get_by_technician(technician_id, pagination_no):
         try:
             requests = [
                 dict(
@@ -688,19 +655,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_result(result):
+    def get_by_result(result, pagination_no):
         try:
             requests = [
                 dict(
@@ -757,19 +727,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_rating(rating):
+    def get_by_rating(rating, pagination_no):
         try:
             requests = [
                 dict(
@@ -826,19 +799,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_detail(detail):
+    def get_by_detail(detail, pagination_no):
         try:
             requests = [
                 dict(
@@ -895,19 +871,22 @@ class RequestService:
                 ).order_by(
                     RequestModel.date.desc(),
                     RequestModel.no.desc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=20
+                ).items
             ]
 
-            if requests:
-                return requests
+            return requests if requests else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod
-    def get_by_no_and_year(no, year):
+    def get_by_no_and_year(no, year, pagination_no):
         try:
             request = db.session.query(
                 RequestModel.public_id,
@@ -931,42 +910,39 @@ class RequestService:
                 extract("year", RequestModel.date) == year
             ).first()
             
-            if request:
-                return dict(
-                    id = request[0],
-                    no = request[1],
-                    date = request[2],
-                    detail = request[3],
-                    result = request[4],
-                    rating = request[5],
-                    photo_fn = request[6],
-                    client = dict(
-                        client_id = request[7],
-                        client_name = request[8],
-                    ),
-                    approach = dict(
-                        approach_id = request[9],
-                        approach_name = request[10]
-                    ),
-                    type = dict(
-                        type_id = request[11],
-                        type_name = request[12]
-                    ),
-                    fixers = [
-                        dict(
-                            fixer_id = technician[0],
-                            fixer_name = technician[1]
-                        ) for technician in db.session.query(
-                            TechnicianModel.public_id,
-                            TechnicianModel.name
-                        ).filter(
-                            TechnicianModel.public_id == RepairModel.technician_fixer_id,
-                            RepairModel.request_task_id == request[0]
-                        ).all()
-                    ]
-                )
-
-            return 404
+            return dict(
+                id = request[0],
+                no = request[1],
+                date = request[2],
+                detail = request[3],
+                result = request[4],
+                rating = request[5],
+                photo_fn = request[6],
+                client = dict(
+                    client_id = request[7],
+                    client_name = request[8],
+                ),
+                approach = dict(
+                    approach_id = request[9],
+                    approach_name = request[10]
+                ),
+                type = dict(
+                    type_id = request[11],
+                    type_name = request[12]
+                ),
+                fixers = [
+                    dict(
+                        fixer_id = technician[0],
+                        fixer_name = technician[1]
+                    ) for technician in db.session.query(
+                        TechnicianModel.public_id,
+                        TechnicianModel.name
+                    ).filter(
+                        TechnicianModel.public_id == RepairModel.technician_fixer_id,
+                        RepairModel.request_task_id == request[0]
+                    ).all()
+                ]
+            ) if request else 404
 
         except:
             return 500

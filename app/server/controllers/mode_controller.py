@@ -10,7 +10,9 @@ _mode = ModeDto.mode
 class Mode(Resource):
     @api.marshal_list_with(_mode, envelope="modes")
     def get(self):
-        get_modes = ModeService.get_all()
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_modes = ModeService.get_all(pagination_no)
 
         if not isinstance(get_modes, int):
             return get_modes

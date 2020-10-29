@@ -4,6 +4,19 @@ from PIL import Image
 
 class RequestService:
     @staticmethod
+    def get_all():
+        try:
+            get_requests_resp = requests.get("{}api/request/".format(request.url_root))
+
+            if get_requests_resp.ok:
+                return json.loads(get_requests_resp.text)
+
+            return get_requests_resp.status_code
+
+        except:
+            return 500
+
+    @staticmethod
     def post(data):
         try:
             photo_file = data.files.get("crtrq_photo_fn_input")
@@ -19,7 +32,7 @@ class RequestService:
             i.thumbnail((600, 600))
             i.save(photo_path)
 
-            api_resp = requests.post(
+            post_request_resp = requests.post(
                 "{}api/request/".format(request.url_root),
                 json= dict(
                     no = data.form.get("crtrq_no_input"),
@@ -46,10 +59,10 @@ class RequestService:
                 )
             )
 
-            if api_resp.ok:
-                return json.loads(api_resp.text)
+            if post_request_resp.ok:
+                return json.loads(post_request_resp.text)
 
-            return api_resp.status_code
+            return post_request_resp.status_code
 
         except:
             return 500

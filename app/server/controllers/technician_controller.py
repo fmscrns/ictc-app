@@ -10,7 +10,9 @@ _technician = TechnicianDto.technician
 class Technician(Resource):
     @api.marshal_list_with(_technician, envelope="technicians")
     def get(self):
-        get_technicians = TechnicianService.get_all()
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_technicians = TechnicianService.get_all(pagination_no)
 
         if not isinstance(get_technicians, int):
             return get_technicians

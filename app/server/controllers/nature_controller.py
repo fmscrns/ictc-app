@@ -10,7 +10,9 @@ _nature = NatureDto.nature
 class Nature(Resource):
     @api.marshal_list_with(_nature, envelope="natures")
     def get(self):
-        get_natures = NatureService.get_all()
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_natures = NatureService.get_all(pagination_no)
 
         if not isinstance(get_natures, int):
             return get_natures

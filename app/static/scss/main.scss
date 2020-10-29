@@ -55,6 +55,16 @@ ul {
     cursor: pointer;
 }
 
+#ictc-st-mf > .row > .mf-cc > .rq-tb > .rq-tb-aa > .dropdown > .dropdown-menu > .tb-opt-cont {
+    padding:5px 7.5px;
+}
+
+#ictc-st-mf > .row > .mf-cc > .rq-tb > .rq-tb-aa > .dropdown > .dropdown-menu > .tb-opt-cont-long {
+    overflow-y: scroll;
+    min-height: 30px;
+    max-height:400px;
+}
+
 #ictc-st-mf > .row > .mf-cc > .rq-tb > .rq-tb-aa > .dropdown > .dropdown-menu > .tb-opt-cont > a:hover {
     cursor: pointer;
 }

@@ -1,10 +1,11 @@
 import uuid, datetime
+from sqlalchemy.orm import exc
 from ... import db
 from ..models import ModeModel
 
 class ModeService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no):
         try:
             modes = [
                 dict(
@@ -15,15 +16,18 @@ class ModeService:
                     ModeModel.name
                 ).order_by(
                     ModeModel.registered_on.asc()
-                ).all()
+                ).paginate(
+                    page = pagination_no,
+                    per_page = 3
+                ).items
             ]
 
-            if modes:
-                return modes
+            return modes if modes else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod

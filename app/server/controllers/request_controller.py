@@ -1,3 +1,4 @@
+import time
 from flask import request
 from flask_restx import Resource
 from ..services.request_service import RequestService
@@ -10,9 +11,12 @@ _request = RequestDto.request
 class Request(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self):
-        get_requests_resp = RequestService.get_all()
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_all(pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -31,9 +35,12 @@ class Request(Resource):
 class RequestByYear(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, year):
-        get_requests_resp = RequestService.get_by_year(year)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_year(year, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -44,43 +51,44 @@ class RequestByYear(Resource):
 class RequestByYearAndMonth(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, year, month):
-        get_requests_resp = RequestService.get_by_year_and_month(year, month)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_year_and_month(year, month, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
 
-@api.route("/newest")
-class NewestRequest(Resource):
-    @api.marshal_with(_request)
-    def get(self):
-        get_request_resp = RequestService.get_newest()
+@api.route("/year/<year>/month/<month>/result/<result>")
+@api.param("year", "The Request date year")
+@api.param("month", "The Request date month")
+@api.param("result", "The Request result")
+class RequestByYearAndMonthAndResult(Resource):
+    @api.marshal_list_with(_request, envelope="requests")
+    def get(self, year, month, result):
+        pagination_no = request.args.get("pagination_no", 1, int)
 
-        if not isinstance(get_request_resp, int):
-            return get_request_resp
+        get_requests_resp = RequestService.get_by_year_and_month_and_result(year, month, result, pagination_no)
 
-        api.abort(get_request_resp)
+        if not isinstance(get_requests_resp, int):
+            time.sleep(1)
+            return get_requests_resp
 
-@api.route("/oldest")
-class OldestRequest(Resource):
-    @api.marshal_with(_request)
-    def get(self):
-        get_request_resp = RequestService.get_oldest()
-
-        if not isinstance(get_request_resp, int):
-            return get_request_resp
-
-        api.abort(get_request_resp)
+        api.abort(get_requests_resp)
 
 @api.route("/office/<office_id>")
 @api.param("office_id", "The Office identifier")
 class RequestByOffice(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, office_id):
-        get_requests_resp = RequestService.get_by_office(office_id)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_office(office_id, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -90,9 +98,12 @@ class RequestByOffice(Resource):
 class RequestByMode(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, mode_id):
-        get_requests_resp = RequestService.get_by_mode(mode_id)
+        pagination_no = request.args.get("pagination_no", 1, int)
 
+        get_requests_resp = RequestService.get_by_mode(mode_id, pagination_no)
+    
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -102,9 +113,12 @@ class RequestByMode(Resource):
 class RequestByNature(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, nature_id):
-        get_requests_resp = RequestService.get_by_nature(nature_id)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_nature(nature_id, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -114,9 +128,12 @@ class RequestByNature(Resource):
 class RequestByTechnician(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, technician_id):
-        get_requests_resp = RequestService.get_by_technician(technician_id)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_technician(technician_id, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -126,9 +143,12 @@ class RequestByTechnician(Resource):
 class RequestByResult(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, result):
-        get_requests_resp = RequestService.get_by_result(result)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_result(result, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -138,9 +158,12 @@ class RequestByResult(Resource):
 class RequestByRating(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, rating):
-        get_requests_resp = RequestService.get_by_rating(rating)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_rating(rating, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -150,9 +173,12 @@ class RequestByRating(Resource):
 class RequestByDetail(Resource):
     @api.marshal_list_with(_request, envelope="requests")
     def get(self, detail):
-        get_requests_resp = RequestService.get_by_detail(detail)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_requests_resp = RequestService.get_by_detail(detail, pagination_no)
 
         if not isinstance(get_requests_resp, int):
+            time.sleep(1)
             return get_requests_resp
 
         api.abort(get_requests_resp)
@@ -163,9 +189,12 @@ class RequestByDetail(Resource):
 class RequestByNoAndYear(Resource):
     @api.marshal_with(_request)
     def get(self, no, year):
-        get_request = RequestService.get_by_no_and_year(no, year)
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_request = RequestService.get_by_no_and_year(no, year, pagination_no)
 
         if not isinstance(get_request, int):
+            time.sleep(1)
             return get_request
 
         api.abort(get_request)

@@ -133,3 +133,6 @@ dmypy.json
 
 #imageFolder
 /app/static/images/
+
+# Excel files
+Book1.xlsx

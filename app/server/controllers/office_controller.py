@@ -10,7 +10,9 @@ _office = OfficeDto.office
 class OfficeList(Resource):
     @api.marshal_list_with(_office, envelope="offices")
     def get(self):
-        get_offices = OfficeService.get_all()
+        pagination_no = request.args.get("pagination_no", 1, int)
+
+        get_offices = OfficeService.get_all(pagination_no)
 
         if not isinstance(get_offices, int):
             return get_offices

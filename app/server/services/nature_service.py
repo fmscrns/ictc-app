@@ -1,10 +1,11 @@
 import uuid, datetime
+from sqlalchemy.orm import exc
 from ... import db
 from ..models import NatureModel
 
 class NatureService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no):
         try:
             natures = [
                 dict(
@@ -15,15 +16,18 @@ class NatureService:
                     NatureModel.name
                 ).order_by(
                     NatureModel.registered_on.asc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=3
+                ).items
             ]
 
-            if natures:
-                return natures
+            return natures if natures else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod

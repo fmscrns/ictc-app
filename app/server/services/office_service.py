@@ -1,10 +1,11 @@
 import uuid, datetime
+from sqlalchemy.orm import exc
 from ... import db
 from ..models import OfficeModel
 
 class OfficeService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no):
         try:
             offices = [
                 dict(
@@ -15,15 +16,18 @@ class OfficeService:
                     OfficeModel.name
                 ).order_by(
                     OfficeModel.registered_on.asc()
-                ).all()
+                ).paginate(
+                    page=pagination_no,
+                    per_page=3
+                ).items
             ]
 
-            if offices:
-                return offices
+            return offices if offices else 404
 
+        except exc.NoResultFound:
             return 404
 
-        except:
+        else:
             return 500
 
     @staticmethod

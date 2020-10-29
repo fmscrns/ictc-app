@@ -1,40 +1,161 @@
+// GLOBALS
+var currentDate = new Date();
+var currentYear = currentDate.getFullYear();
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var currentMonth = parseInt(currentDate.getMonth()) + 1;
+var currentDay = parseInt(currentDate.getDate());
+
 // DASHBOARD
 document.querySelectorAll(".cs-pst").forEach((card) => {
-    const chart = card.querySelector(".cs-pst-d");
-    
-    var data = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    const yearDropdown = card.querySelector(".dropdown");
+    const button = yearDropdown.querySelector(".btn");
+    const yearDropdownMenu = yearDropdown.querySelector(".dropdown-menu");
 
-        series: [
-            [2, 1, 4, 2, 0, 1, 1, 2, 5, 2, 1, 4]
-        ]
+    $.ajax({
+        type: "GET",
+
+        url:  "api/request/",
+
+        success: function (request) {
+            let date = new Date(request["requests"][0]["date"]);
+            let newestRequestYear = date.getFullYear();
+
+            button.innerHTML = newestRequestYear;
+
+            let inbetweenYearCount = newestRequestYear - 2015;
+                
+            while (inbetweenYearCount >= 0) {
+                let yearItem = document.createElement("a");
+                yearItem.classList.add("dropdown-item");
+
+                let yearDisplay = (2015 + inbetweenYearCount).toString();
+                yearItem.innerHTML = yearDisplay;
+                
+                yearItem.addEventListener("click", () => {
+                    button.innerHTML = yearDisplay;
+                    populateYearlyRequestPerformance(yearDisplay);
+                });
+
+                yearDropdownMenu.append(yearItem)
+                
+                inbetweenYearCount--;
+            }
+            
+            populateYearlyRequestPerformance(newestRequestYear);
+        }
+    });
+
+    var chart = card.querySelector(".cs-pst-d");
+    var data = {
+        labels: [],
+
+        series: [[]]
     };
-    
-    new Chartist.Line(chart, data, {showArea: true});
+
+    function populateYearlyRequestPerformance (year) {
+        data.labels = [];
+        data.series[0] = [];
+
+        let maxMonth = (year == currentYear) ? currentMonth : 12;
+
+        var activeAjaxConnections = 0;
+        for(var i=1; i<=maxMonth; i++){
+            (function(monthInt){
+                $.ajax({
+                    method: "GET",
+
+                    beforeSend: function() {
+                        activeAjaxConnections++;
+                    },
+
+                    url:  "api/request/year/" + year + "/month/" + monthInt + "/result/0",
+
+                    success: function (response) {
+                        activeAjaxConnections--;
+
+                        data.labels[monthInt-1] = monthNames[monthInt-1];
+                        data.series[0][monthInt-1] = response["requests"].length;
+                        
+                        if (activeAjaxConnections === 0) {
+                            var chartist = new Chartist.Line(chart, data, {showArea: true});
+
+                            chartist.on('draw', function(data) {
+                                if(data.type === 'line' || data.type === 'area') {
+                                    data.element.animate({
+                                    d: {
+                                        begin: 2000 * data.index,
+                                        dur: 2000,
+                                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                                        to: data.path.clone().stringify(),
+                                        easing: Chartist.Svg.Easing.easeOutQuint
+                                    }
+                                    });
+                                }
+                            });
+                        }
+                    },
+
+                    error: function (xhr) {
+                        activeAjaxConnections--;
+
+                        if (xhr.status === 404) {
+                            data.labels[monthInt-1] = monthNames[monthInt-1];
+                            data.series[0][monthInt-1] = 0;
+
+                            if (activeAjaxConnections === 0) {
+                                var chartist = new Chartist.Line(chart, data, {showArea: true});
+
+                                chartist.on('draw', function(data) {
+                                    if(data.type === 'line' || data.type === 'area') {
+                                        data.element.animate({
+                                        d: {
+                                            begin: 2000 * data.index,
+                                            dur: 2000,
+                                            from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                                            to: data.path.clone().stringify(),
+                                            easing: Chartist.Svg.Easing.easeOutQuint
+                                        }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            })(i);
+
+        }
+    }
 });
 
 document.querySelectorAll(".cs-sro").forEach((card) => {
     const chart = card.querySelector(".cs-sro-d");
 
     var data = {
-        labels: ["City registrar's office", "City legal office", "Pala-o barangay hall", "City engineer's office", "Hall of Justice", "Del carmen barangay hall", "City mayor's office", "MSU IIT"],
+        labels: ["City registrar's office", "City legal office", "Pala-o barangay hall", "City legal office", "Pala-o barangay hall", "City legal office", "Pala-o barangay hall", "City legal office", "Pala-o barangay hall"],
         
         series: [
-            [5, 4, 3, 7, 5, 2, 0, 2],
-            [3, 2, 9, 5, 4, 4, 7, 5],
-            [1, 9, 1, 5, 2, 1, 2, 0],
-            [4, 6, 4, 4, 5, 0, 4, 0],
+            [5, 4, 3],
+            [3, 2, 9],
+            [1, 9, 1],
+            [4, 6, 4],
         ]
     }
+
+    var labelsHeight = data.labels.length * 20;
+    var containerHeight = $(chart).parent().outerHeight();
 
     var options = {
         seriesBarDistance: 10,
         reverseData: true,
         horizontalBars: true,
+        height: Math.max(labelsHeight, containerHeight) + 'px',
         axisY: {
             offset: 75
         }
     }
+
+    chart.style.height = Math.max(labelsHeight, containerHeight) + "px";
 
     new Chartist.Bar(chart, data, options);
 });
@@ -95,43 +216,105 @@ document.querySelectorAll(".cs-rs").forEach((card) => {
 });
 
 // REQUESTS
-function filterRequestsAjaxCall(queryString, listGroup) {
-    while ($(listGroup.lastChild).hasClass("list-group-item-removable")) {
-        listGroup.removeChild(listGroup.lastChild);
-    }
+function filterRequestsAjaxCall(queryString, listGroup, paginationNo) {
+    window.scrollTo(0, 0);
+    $(window).off('scroll');
+
+    $(listGroup).find(".list-group-item-removable").remove();
 
     const loading = listGroup.querySelector(".rq-ld-sp");
     loading.classList.remove("d-none");
     loading.classList.add("d-block");
 
     const emptyFeedback = listGroup.querySelector(".rq-lg-empty");
-    loading.classList.remove("d-block");
-    loading.classList.add("d-none");
+    emptyFeedback.classList.remove("d-block");
+    emptyFeedback.classList.add("d-none");
+
+    const paginateImpasseFeedback = listGroup.querySelector(".rq-lg-paginate-impasse");
+    paginateImpasseFeedback.classList.remove("d-block");
+    paginateImpasseFeedback.classList.add("d-none");
 
     $.ajax({
         type: "GET",
 
-        url:  "api/request/" + queryString,
+        url:  "api/request/" + queryString + "?pagination_no=" + paginationNo,
 
         success: function (response) {
-            populateRequestList(listGroup, response);
+            let itemCount = populateRequestList(listGroup, response);
 
             emptyFeedback.classList.remove("d-block");
             emptyFeedback.classList.add("d-none");
             loading.classList.remove("d-block");
             loading.classList.add("d-none");
+
+            if (itemCount < 20) {
+                paginateImpasseFeedback.classList.remove("d-none");
+                paginateImpasseFeedback.classList.add("d-block");
+            } else {
+                activateNextPaginate();
+            }
         },
 
-        error: function(xhr, textStatus, error) {
+        error: function(xhr) {
             if (xhr.status === 404) {
+                paginateImpasse = true;
+
+                loading.classList.remove("d-block");
+                loading.classList.add("d-none");
+
                 emptyFeedback.classList.remove("d-none");
                 emptyFeedback.classList.add("d-block");
             }
         }
     });
+
+    function activateNextPaginate () {
+        var activeAjaxConnection = false;
+
+        $(window).scroll(function() {
+            if(($(window).scrollTop() + $(window).height() == $(document).height()) && !activeAjaxConnection) {
+                loading.classList.remove("d-none");
+                loading.classList.add("d-block");
+    
+                paginationNo++;
+    
+                $.ajax({
+                    beforeSend: function () {
+                        activeAjaxConnection = true;
+                    },
+                    type: "GET",
+            
+                    url:  "api/request/" + queryString + "?pagination_no=" + paginationNo,
+            
+                    success: function (response) {
+                        populateRequestList(listGroup, response);
+            
+                        loading.classList.remove("d-block");
+                        loading.classList.add("d-none");
+    
+                        activeAjaxConnection = false;
+                    },
+    
+                    error: function (xhr) {
+                        if (xhr.status === 404) {
+                            loading.classList.remove("d-block");
+                            loading.classList.add("d-none");
+    
+                            paginateImpasseFeedback.classList.remove("d-none");
+                            paginateImpasseFeedback.classList.add("d-block");
+    
+                            $(window).off('scroll');
+                        }
+                    }
+                });
+            }
+        });
+    }
 }
 
 function populateRequestList(listGroup, data) {
+    var itemCount = 0;
+
     for (let request of data["requests"]) {
         let baseItem = listGroup.querySelector("#rq-lg-i");  
 
@@ -139,7 +322,6 @@ function populateRequestList(listGroup, data) {
 
         item.find(".rq-li-no").html("<span>" + request["no"] + "</span>");
 
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         let date = new Date(request["date"]);
         item.find(".rq-li-da").html("<span class='li-da-normal'>" + (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "</span><span class='li-da-active'>" + monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "</span>");
 
@@ -193,12 +375,16 @@ function populateRequestList(listGroup, data) {
         }
         item.find(".rq-li-ra").html(ratingBadge);
 
-        item.appendTo(listGroup);
+        item.insertBefore($(listGroup).find(".rq-ld-sp"));
+
+        itemCount++;
     }
+
+    return itemCount;
 }
 
 document.querySelectorAll(".rq-lg").forEach((listGroup) => {
-    filterRequestsAjaxCall("", listGroup);
+    filterRequestsAjaxCall("", listGroup, 1);
 });
 
 document.querySelectorAll(".rq-tb-aa").forEach((container) => {
@@ -207,47 +393,28 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const yearSelect = dateCont.querySelector(".tb-da-y").querySelector("select");
         const monthSelect = dateCont.querySelector(".tb-da-m").querySelector("select");
 
-        var newestRequestYear;
-        var oldestRequestYear;
-
         $.ajax({
             type: "GET",
 
-            url:  "api/request/newest",
+            url:  "api/request/",
     
             success: function (request) {
-                let date = new Date(request["date"]);
+                let date = new Date(request["requests"][0]["date"]);
+                let newestRequestYear = date.getFullYear();
 
-                oldestRequestAjaxCall(date.getFullYear());
+                let inbetweenYearCount = newestRequestYear - 2015;
+                    
+                while (inbetweenYearCount >= 0) {
+                    let yearOption = document.createElement("option");
+                    
+                    yearOption.innerHTML = (2015 + inbetweenYearCount).toString();
+                    
+                    yearSelect.append(yearOption)
+                    
+                    inbetweenYearCount--;
+                }
             }
         });
-
-        function oldestRequestAjaxCall(newestRequestYear) {
-            $.ajax({
-                type: "GET",
-        
-                url:  "api/request/oldest",
-        
-                success: function (request) {
-                    let date = new Date(request["date"]);
-
-                    oldestRequestYear = date.getFullYear();
-
-                    let inbetweenYearCount = oldestRequestYear - newestRequestYear;
-                    
-                    
-                    while (inbetweenYearCount >= 0) {
-                        let yearOption = document.createElement("option");
-                        
-                        yearOption.innerHTML = (newestRequestYear + inbetweenYearCount).toString();
-                        
-                        yearSelect.append(yearOption)
-                        
-                        inbetweenYearCount--;
-                    }
-                }
-            });
-        }
 
         const filter = dateCont.querySelector("a");
 
@@ -258,7 +425,9 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
                 queryString += "/month/" + monthSelect.value;
             }
 
-            filterRequestsAjaxCall(queryString, listGroup);
+            filterRequestsAjaxCall(queryString, listGroup, 1);
+
+            $(dateCont).trigger("click");
         });
     });
 
@@ -270,35 +439,42 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
         const manageListGroup = manageModal.querySelector("ul");
 
-        $.ajax({
-            type: "GET",
+        
+        getOfficesAjaxCall(1);
 
-            url:  "api/office/",
+        function getOfficesAjaxCall (paginationNo) {
+            $.ajax({
+                type: "GET",
     
-            success: function (response) {
-                for (let office of response["offices"]) {
-                    let option = document.createElement("a");
+                url:  "api/office/?pagination_no=" + paginationNo,
+    
+                success: function (response) {
+                    for (let office of response["offices"]) {
+                        let option = document.createElement("a");
+    
+                        option.classList.add("font-weight-light", "small");
+                        option.innerHTML = office["name"];
+    
+                        option.addEventListener("click", () => {
+                            filterRequestsAjaxCall("office/" + office["id"], listGroup, 1);
 
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = office["name"];
+                            $(officeCont).trigger("click");
+                        });
+    
+                        officeOption.append(option);
+    
+                        let item = $(manageListGroup.querySelector("#mng-offc-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+    
+                        item.attr("data-id", office["id"]);
+                        item.find("span").html(office["name"]);
+    
+                        item.appendTo(manageListGroup);
+                    }
 
-                    option.addEventListener("click", () => {
-                        filterRequestsAjaxCall("office/" + office["id"], listGroup);
-                    });
-
-                    officeOption.append(option);
-
-                    let item = $(manageListGroup.querySelector("#mng-offc-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
-
-                    item.attr("data-id", office["id"]);
-                    item.find("span").html(office["name"]);
-
-                    item.appendTo(manageListGroup);
+                    getOfficesAjaxCall(paginationNo + 1);
                 }
-            }
-        });
-
-
+            });
+        }
     });
 
     container.querySelectorAll(".rq-tb-m").forEach((modeCont) => {
@@ -309,33 +485,41 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
         const manageListGroup = manageModal.querySelector("ul");
 
-        $.ajax({
-            type: "GET",
+        getModesAjaxCall(1);
 
-            url:  "api/mode/",
+        function getModesAjaxCall (paginationNo) {
+            $.ajax({
+                type: "GET",
     
-            success: function (response) {
-                for (let mode of response["modes"]) {
-                    let option = document.createElement("a");
+                url:  "api/mode/?pagination_no=" + paginationNo,
+        
+                success: function (response) {
+                    for (let mode of response["modes"]) {
+                        let option = document.createElement("a");
+    
+                        option.classList.add("font-weight-light", "small");
+                        option.innerHTML = mode["name"];
+    
+                        option.addEventListener("click", () => {
+                            filterRequestsAjaxCall("mode/" + mode["id"], listGroup, 1);
 
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = mode["name"];
+                            $(modeCont).trigger("click");
+                        });
+    
+                        modeOption.append(option);
+    
+                        let item = $(manageListGroup.querySelector("#mng-md-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+    
+                        item.attr("data-id", mode["id"]);
+                        item.find("span").html(mode["name"]);
+    
+                        item.appendTo(manageListGroup);
+                    }
 
-                    option.addEventListener("click", () => {
-                        filterRequestsAjaxCall("mode/" + mode["id"], listGroup);
-                    });
-
-                    modeOption.append(option);
-
-                    let item = $(manageListGroup.querySelector("#mng-md-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
-
-                    item.attr("data-id", mode["id"]);
-                    item.find("span").html(mode["name"]);
-
-                    item.appendTo(manageListGroup);
+                    getModesAjaxCall(paginationNo + 1);
                 }
-            }
-        });
+            });
+        }
     });
 
     container.querySelectorAll(".rq-tb-na").forEach((natureCont) => {
@@ -346,33 +530,41 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
         const manageListGroup = manageModal.querySelector("ul");
 
-        $.ajax({
-            type: "GET",
+        getNaturesAjaxCall(1);
 
-            url:  "api/nature/",
+        function getNaturesAjaxCall (paginationNo) {
+            $.ajax({
+                type: "GET",
     
-            success: function (response) {
-                for (let nature of response["natures"]) {
-                    let option = document.createElement("a");
+                url:  "api/nature/?pagination_no=" + paginationNo,
+        
+                success: function (response) {
+                    for (let nature of response["natures"]) {
+                        let option = document.createElement("a");
+    
+                        option.classList.add("font-weight-light", "small");
+                        option.innerHTML = nature["name"];
+    
+                        option.addEventListener("click", () => {
+                            filterRequestsAjaxCall("nature/" + nature["id"], listGroup, 1);
 
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = nature["name"];
+                            $(natureCont).trigger("click");
+                        });
+    
+                        natureOption.append(option);
+    
+                        let item = $(manageListGroup.querySelector("#mng-ntr-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+    
+                        item.attr("data-id", nature["id"]);
+                        item.find("span").html(nature["name"]);
+    
+                        item.appendTo(manageListGroup);
+                    }
 
-                    option.addEventListener("click", () => {
-                        filterRequestsAjaxCall("nature/" + nature["id"], listGroup);
-                    });
-
-                    natureOption.append(option);
-
-                    let item = $(manageListGroup.querySelector("#mng-ntr-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
-
-                    item.attr("data-id", nature["id"]);
-                    item.find("span").html(nature["name"]);
-
-                    item.appendTo(manageListGroup);
+                    getNaturesAjaxCall(paginationNo + 1);
                 }
-            }
-        });
+            });
+        }
     });
 
     container.querySelectorAll(".rq-tb-t").forEach((technicianCont) => {
@@ -383,33 +575,41 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const manageModal = document.querySelector(manageBtn.getAttribute("data-target"));
         const manageListGroup = manageModal.querySelector("ul");
 
-        $.ajax({
-            type: "GET",
+        getTechnicianAjaxCall(1);
 
-            url:  "api/technician/",
+        function getTechnicianAjaxCall (paginationNo) {
+            $.ajax({
+                type: "GET",
     
-            success: function (response) {
-                for (let technician of response["technicians"]) {
-                    let option = document.createElement("a");
+                url:  "api/technician/?pagination_no=" + paginationNo,
+        
+                success: function (response) {
+                    for (let technician of response["technicians"]) {
+                        let option = document.createElement("a");
+    
+                        option.classList.add("font-weight-light", "small");
+                        option.innerHTML = technician["name"];
+    
+                        option.addEventListener("click", () => {
+                            filterRequestsAjaxCall("technician/" + technician["id"], listGroup, 1);
 
-                    option.classList.add("font-weight-light", "small");
-                    option.innerHTML = technician["name"];
+                            $(technicianCont).trigger("click");
+                        });
+    
+                        technicianOption.append(option);
+    
+                        let item = $(manageListGroup.querySelector("#mng-tch-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
+    
+                        item.attr("data-id", technician["id"]);
+                        item.find("span").html(technician["name"]);
+    
+                        item.appendTo(manageListGroup);
+                    }
 
-                    option.addEventListener("click", () => {
-                        filterRequestsAjaxCall("technician/" + technician["id"], listGroup);
-                    });
-
-                    technicianOption.append(option);
-
-                    let item = $(manageListGroup.querySelector("#mng-tch-mdl-i")).clone().removeAttr("id").addClass("list-group-item");
-
-                    item.attr("data-id", technician["id"]);
-                    item.find("span").html(technician["name"]);
-
-                    item.appendTo(manageListGroup);
+                    getTechnicianAjaxCall(paginationNo + 1);
                 }
-            }
-        });
+            });
+        }
     });
 
     container.querySelectorAll(".rq-tb-re").forEach((resultCont) => {
@@ -419,7 +619,9 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         resultOption.querySelectorAll("a").forEach((option) => {
 
             option.addEventListener("click", () => {
-                filterRequestsAjaxCall("result/" + option.getAttribute("value"), listGroup);
+                filterRequestsAjaxCall("result/" + option.getAttribute("value"), listGroup, 1);
+
+                $(resultCont).trigger("click");
             });
         });
     });
@@ -430,7 +632,9 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
 
         ratingOption.querySelectorAll("a").forEach((option) => {
             option.addEventListener("click", () => {
-                filterRequestsAjaxCall("rating/" + option.getAttribute("value"), listGroup);
+                filterRequestsAjaxCall("rating/" + option.getAttribute("value"), listGroup, 1);
+
+                $(ratingCont).trigger("click");
             });
         });
     });
@@ -442,7 +646,9 @@ document.querySelectorAll(".rq-tb-aa").forEach((container) => {
         const detailSubmit = detailCont.querySelector("a");
 
         detailSubmit.addEventListener("click", () => {
-            filterRequestsAjaxCall("detail/" + detailInput.value, listGroup);
+            filterRequestsAjaxCall("detail/" + detailInput.value, listGroup, 1);
+
+            $(detailCont).trigger("click");
         });
     });
 });
@@ -545,10 +751,6 @@ document.querySelectorAll(".frcr-cnt").forEach((toggle) => {
         }
     }
 
-    var currentDate = new Date();
-    var currentYear = currentDate.getFullYear();
-    var currentMonth = parseInt(currentDate.getMonth()) + 1;
-    var currentDay = parseInt(currentDate.getDate());
     var currentDateString = currentYear.toString() + "-" + ((currentMonth < 10) ? ("0" + currentMonth.toString()) : (currentMonth.toString())) + "-" + ((currentDay < 10) ? ("0" + currentDay.toString()) : (currentDay.toString()));
     dateInput.setAttribute("max", currentDateString);
     var dateRegex = /^(?:19|20)(?:(?:[13579][26]|[02468][048])-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))|(?:[0-9]{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:29|30))|(?:(?:0[13578]|1[02])-31)))$/;
