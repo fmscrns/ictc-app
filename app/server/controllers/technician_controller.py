@@ -7,7 +7,7 @@ api = TechnicianDto.api
 _technician = TechnicianDto.technician
 
 @api.route("/")
-class Technician(Resource):
+class TechnicianList(Resource):
     @api.marshal_list_with(_technician, envelope="technicians")
     def get(self):
         pagination_no = request.args.get("pagination_no", 1, int)
@@ -33,9 +33,16 @@ class Technician(Resource):
 
         api.abort(verify_technician)
 
+@api.route("/<id>")
+@api.param("id", "The Technician identifier")
+class Technician(Resource):
+    @api.marshal_with(_technician)
+    def get(self, id):
+        pass
+
     @api.expect(_technician, validate=True)
-    def patch(self):
-        patch_technician = TechnicianService.patch(request.json)
+    def patch(self, id):
+        patch_technician = TechnicianService.patch(id, request.json)
 
         if patch_technician == 200:
             return patch_technician
@@ -43,8 +50,8 @@ class Technician(Resource):
         api.abort(patch_technician)
 
     @api.expect(_technician, validate=True)
-    def delete(self):
-        delete_technician = TechnicianService.delete(request.json)
+    def delete(self, id):
+        delete_technician = TechnicianService.delete(id, request.json)
 
         if delete_technician == 200:
             return delete_technician

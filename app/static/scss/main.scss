@@ -152,31 +152,74 @@ ul {
 }
 
 #ictc-st-mf > .row > .mf-cc > .db-cc-cs > div > .card > .card-body > .cs-dvd {
-    height: 50px;
+    height: 30px;
 }
 
-#chart2 > .ct-chart-pie {
-    overflow: visible;
+$ct-series-colors: (
+        #d70206,
+        #f05b4f,
+        #f4c63d,
+        #d17905,
+        #453d3f,
+        #59922b,
+        #0544d3,
+        #6b0392,
+        #f05b4f,
+        #dda458,
+        #eacf7d,
+        #86797d,
+        #b2c326,
+        #6188e2,
+        #a748ca
+) !default;
+
+.cs-sro-l {
+    height: 30px;
 }
 
-#chart2 > .ct-chart-pie > .ct-series-a > .ct-slice-pie {
-    fill: #00ff00; 
+.cs-sro-l > .ct-legend {
+    position: relative;
+    z-index: 10;
+    list-style-type: none;
+
+    li {
+        position: relative;
+        font-size: 8px;
+        padding:0 15px;
+        // margin-bottom: 3px;
+        display: inline-block;
+    }
+
+    li:before {
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        left: 0;
+        content: '';
+        border: 3px solid transparent;
+        border-radius: 2px;
+    }
+
+    li.inactive:before {
+        background: transparent;
+    }
+
+    &.ct-legend-inside {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    @for $i from 0 to length($ct-series-colors) {
+        .ct-series-#{$i}:before {
+            background-color: nth($ct-series-colors, $i + 1);
+            border-color: nth($ct-series-colors, $i + 1);
+        }
+    }
 }
 
-#chart2 > .ct-chart-pie > .ct-series-b > .ct-slice-pie {
-    fill: #7FFF00;
-}
-
-#chart2 > .ct-chart-pie > .ct-series-c > .ct-slice-pie {
-    fill: yellow;
-}
-
-#chart2 > .ct-chart-pie > .ct-series-d > .ct-slice-pie {
-    fill: orange;
-}
-
-#chart2 > .ct-chart-pie > .ct-series-e > .ct-slice-pie {
-    fill: red;
+.cs-sro-d {
+    margin-left: -35px;
 }
 
 // COMPONENTS

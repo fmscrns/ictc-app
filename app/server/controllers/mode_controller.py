@@ -33,9 +33,16 @@ class Mode(Resource):
 
         api.abort(verify_mode)
 
+@api.route("/<id>")
+@api.param("id", "The Mode identifier")
+class Mode(Resource):
+    @api.marshal_with(_mode)
+    def get(self, id):
+        pass
+
     @api.expect(_mode, validate=True)
-    def patch(self):
-        patch_mode = ModeService.patch(request.json)
+    def patch(self, id):
+        patch_mode = ModeService.patch(id, request.json)
 
         if patch_mode == 200:
             return patch_mode
@@ -43,8 +50,8 @@ class Mode(Resource):
         api.abort(patch_mode)
 
     @api.expect(_mode, validate=True)
-    def delete(self):
-        delete_mode = ModeService.delete(request.json)
+    def delete(self, id):
+        delete_mode = ModeService.delete(id, request.json)
 
         if delete_mode == 200:
             return delete_mode

@@ -3,9 +3,9 @@ from flask import request
 
 class NatureService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no=1):
         try:
-            get_natures_resp = requests.get("{}api/nature/".format(request.url_root))
+            get_natures_resp = requests.get("{}api/nature/?pagination_no={}".format(request.url_root, pagination_no))
 
             if get_natures_resp.ok:
                 return json.loads(get_natures_resp.text)
@@ -37,9 +37,8 @@ class NatureService:
     def edit(data):
         try:
             edit_nature_resp = requests.patch(
-                "{}api/nature/".format(request.url_root),
+                "{}api/nature/{}".format(request.url_root, data.form.get("edtnt_id_input")),
                 json= dict(
-                    id = data.form.get("edtnt_id_input"),
                     name = data.form.get("edtnt_name_input")
                 )
             )
@@ -56,9 +55,8 @@ class NatureService:
     def delete(data):
         try:
             delete_nature_resp = requests.delete(
-                "{}api/nature/".format(request.url_root),
+                "{}api/nature/{}".format(request.url_root, data.form.get("deltnt_id_input")),
                 json= dict(
-                    id = data.form.get("deltnt_id_input"),
                     name = data.form.get("deltnt_name_input")
                 )
             )

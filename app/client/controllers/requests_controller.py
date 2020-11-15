@@ -1,3 +1,4 @@
+import itertools
 from flask import render_template, url_for, flash, redirect, request, abort
 from ... import client_bp
 from ..forms.request_form import CreateRequestForm
@@ -14,7 +15,7 @@ from ..utils._error_handlers import *
 
 @client_bp.route("/requests", methods=["GET", "POST"])
 def requests():
-    createRequestForm = CreateRequestForm().ready_form()
+    createRequestForm = CreateRequestForm()
     createOfficeForm = CreateOfficeForm()
     createModeForm = CreateModeForm()
     createNatureForm = CreateNatureForm()

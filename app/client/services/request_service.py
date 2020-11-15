@@ -4,9 +4,9 @@ from PIL import Image
 
 class RequestService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no=1):
         try:
-            get_requests_resp = requests.get("{}api/request/".format(request.url_root))
+            get_requests_resp = requests.get("{}api/request/pagination_no={}".format(request.url_root, pagination_no))
 
             if get_requests_resp.ok:
                 return json.loads(get_requests_resp.text)

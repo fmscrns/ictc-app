@@ -3,9 +3,9 @@ from flask import request
 
 class OfficeService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no=1):
         try:
-            get_offices_resp = requests.get("{}api/office/".format(request.url_root))
+            get_offices_resp = requests.get("{}api/office/?pagination_no={}".format(request.url_root, pagination_no))
 
             if get_offices_resp.ok:
                 return json.loads(get_offices_resp.text)
@@ -37,9 +37,8 @@ class OfficeService:
     def edit(data):
         try:
             edit_office_resp = requests.patch(
-                "{}api/office/".format(request.url_root),
+                "{}api/office/{}".format(request.url_root, data.form.get("edtof_id_input")),
                 json= dict(
-                    id = data.form.get("edtof_id_input"),
                     name = data.form.get("edtof_name_input")
                 )
             )
@@ -56,9 +55,8 @@ class OfficeService:
     def delete(data):
         try:
             delete_office_resp = requests.delete(
-                "{}api/office/".format(request.url_root),
+                "{}api/office/{}".format(request.url_root, data.form.get("deltof_id_input")),
                 json= dict(
-                    id = data.form.get("deltof_id_input"),
                     name = data.form.get("deltof_name_input")
                 )
             )

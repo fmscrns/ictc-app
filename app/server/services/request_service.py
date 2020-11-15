@@ -1,5 +1,5 @@
 import uuid, datetime
-from sqlalchemy import extract
+from sqlalchemy import extract, func, asc, desc
 from sqlalchemy.orm import exc
 from ... import db
 from ..models import *
@@ -70,8 +70,6 @@ class RequestService:
 
             return requests if requests else 404
 
-            return requests if requests else 404
-
         except exc.NoResultFound:
             return 404
 
@@ -120,10 +118,10 @@ class RequestService:
                     verify_rating = True
 
             if verify_no and verify_office and verify_mode and verify_nature and verify_technician and verify_rating:
-                req_pid = str(uuid.uuid4())
+                req_new_id = str(uuid.uuid4())
 
                 new_request = RequestModel(
-                    public_id = req_pid,
+                    public_id = req_new_id,
                     no = data.get("no"),
                     date = data.get("date"),
                     detail = data.get("detail"),
@@ -139,20 +137,20 @@ class RequestService:
                 db.session.add(new_request)
 
                 for fixer in data.get("fixers"):
-                    rep_pid = str(uuid.uuid4())
+                    rep_new_id = str(uuid.uuid4())
 
                     new_repair = RepairModel(
-                        public_id = rep_pid,
+                        public_id = rep_new_id,
                         registered_on = datetime.datetime.utcnow(),
                         technician_fixer_id = fixer["id"],
-                        request_task_id = req_pid
+                        request_task_id = req_new_id
                     )
 
                     db.session.add(new_repair)
 
                 db.session.commit()
 
-                return req_pid
+                return req_new_id
 
             return 400
 
@@ -295,8 +293,6 @@ class RequestService:
                     per_page=20
                 ).items
             ]
-
-            return requests if requests else 404
 
             return requests if requests else 404
 

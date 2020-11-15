@@ -46,10 +46,10 @@ class TechnicianService:
     @staticmethod
     def post(data):
         try:
-            pid = str(uuid.uuid4())
+            new_id = str(uuid.uuid4())
 
             new_technician = TechnicianModel(
-                public_id = pid,
+                public_id = new_id,
                 name = data.get("name"),
                 registered_on = datetime.datetime.utcnow()
             )
@@ -58,15 +58,15 @@ class TechnicianService:
 
             db.session.commit()
 
-            return pid
+            return new_id
 
         except:
             return 500
 
     @staticmethod
-    def patch(data):
+    def patch(id, data):
         try:
-            technician = TechnicianModel.query.filter_by(public_id=data.get("id")).first()
+            technician = TechnicianModel.query.filter_by(public_id=id).first()
             technician = technician if not TechnicianModel.query.filter_by(name=data.get("name")).first() else None
 
             if technician:
@@ -82,9 +82,9 @@ class TechnicianService:
             return 500
 
     @staticmethod
-    def delete(data):
+    def delete(id, data):
         try:
-            technician = TechnicianModel.query.filter_by(public_id=data.get("id")).first()
+            technician = TechnicianModel.query.filter_by(public_id=id).first()
             technician = technician if technician.name == data.get("name") else None
 
             if technician:

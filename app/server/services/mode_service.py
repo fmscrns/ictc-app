@@ -64,9 +64,9 @@ class ModeService:
             return 500
 
     @staticmethod
-    def patch(data):
+    def patch(id, data):
         try:
-            mode = ModeModel.query.filter_by(public_id=data.get("id")).first()
+            mode = ModeModel.query.filter_by(public_id=id).first()
             mode = mode if not ModeModel.query.filter_by(name=data.get("name")).first() else None
 
             if mode:
@@ -82,9 +82,9 @@ class ModeService:
             return 500
 
     @staticmethod
-    def delete(data):
+    def delete(id, data):
         try:
-            mode = ModeModel.query.filter_by(public_id=data.get("id")).first()
+            mode = ModeModel.query.filter_by(public_id=id).first()
             mode = mode if mode.name == data.get("name") else None
 
             if mode:

@@ -45,33 +45,42 @@
                             Performed services over the months
                         </h3>
                         <div class="dropdown mb-2">
-                            <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+                            <a class="btn btn-outline-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                               <a class="dropdown-item"></a>
                             </div>
                         </div>
                     </div>
                     <div class="cs-dvd"></div>
-                    <div class="cs-pst-d ct-chart ct-minor-seventh"></div>
+                    <div class="cs-pst-d ct-chart ct-minor-seventh d-flex justify-content-center align-items-center"></div>
                 </div>
             </div>
-            <div class="cs-sro card bg-light mt-2 col box-shadow" style="height:auto;">
-                <div class="card-body" style="height:auto;">
-                    <h5 class="card-title mt-3 ml-3 font-weight-bold">Service requests per office</h5>
+            <div class="cs-sro card bg-light mt-2 box-shadow">
+                <div class="card-body">
+                    <div class="card-title mt-3 mx-3 d-flex align-items-center justify-content-between">
+                        <h3 class="font-weight-bold">
+                            Service requests per office
+                        </h3>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" disabled>&laquo; Highest</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" disabled>Lowest &raquo;</button>
+                        </div>
+                    </div>
                     <div class="cs-dvd"></div>
                     <div class="cs-sro-d ct-chart ct-octave"></div>
+                    <div class="cs-sro-l container-fluid d-flex justify-content-center px-4"></div>
                 </div>
             </div>
-            <div class="cs-tsp card bg-light mt-2 col box-shadow">
+            {#<div class="cs-tsp card bg-light mt-2 col box-shadow">
                 <div class="card-body">
                     <h5 class="card-title mt-3 ml-3 font-weight-bold">Technicians and the services they have performed</h5>
                     <div class="cs-dvd"></div>
                     <div class="cs-tsp-d ct-chart ct-octave"></div>
                 </div>
-            </div>
+            </div>#}
         </div>
         <div class="col d-flex flex-column">
-            <div class="cs-rs card ml-2 mt-2 bg-light box-shadow">
+            {#<div class="cs-rs card ml-2 mt-2 bg-light box-shadow">
                 <div class="card-body">
                     <h5 class="card-title mt-3 ml-3 ml-5 font-weight-bold">Rating summary</h5>
                     <div class="cs-dvd"></div>
@@ -85,7 +94,7 @@
                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt delectus tempore, iste error eveniet rerum deleniti doloremque voluptate nostrum illum sequi sit cumque eaque quaerat quibusdam at excepturi optio explicabo ex assumenda omnis eum officia enim laboriosam! Quam a omnis ab dolorem quaerat veritatis, in doloremque eius rem pariatur iste illo dicta autem. Eum accusamus qui nam maxime est error dolorem dignissimos incidunt, ad sit fugiat odio sed dicta modi, dolore id unde nobis atque facere sequi corrupti sunt neque! Repudiandae reiciendis omnis expedita, quos ducimus tempora ipsum natus. Culpa dolorem minima corrupti quod possimus est corporis voluptate quam aperiam!
                     </p>
                 </div>
-            </div>
+            </div>#}
         </div>
     </div>
 {% endblock content %}

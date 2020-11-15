@@ -3,9 +3,9 @@ from flask import request
 
 class ModeService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no=1):
         try:
-            get_modes_resp = requests.get("{}api/mode/".format(request.url_root))
+            get_modes_resp = requests.get("{}api/mode/?pagination_no={}".format(request.url_root, pagination_no))
 
             if get_modes_resp.ok:
                 return json.loads(get_modes_resp.text)
@@ -37,9 +37,8 @@ class ModeService:
     def edit(data):
         try:
             edit_mode_resp = requests.patch(
-                "{}api/mode/".format(request.url_root),
+                "{}api/mode/{}".format(request.url_root, data.form.get("edtmd_id_input")),
                 json= dict(
-                    id = data.form.get("edtmd_id_input"),
                     name = data.form.get("edtmd_name_input")
                 )
             )
@@ -56,9 +55,8 @@ class ModeService:
     def delete(data):
         try:
             delete_mode_resp = requests.delete(
-                "{}api/mode/".format(request.url_root),
+                "{}api/mode/{}".format(request.url_root, data.form.get("deltmd_id_input")),
                 json= dict(
-                    id = data.form.get("deltmd_id_input"),
                     name = data.form.get("deltmd_name_input")
                 )
             )

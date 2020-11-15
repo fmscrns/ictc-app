@@ -3,9 +3,9 @@ from flask import request
 
 class TechnicianService:
     @staticmethod
-    def get_all():
+    def get_all(pagination_no=1):
         try:
-            get_technicians_resp = requests.get("{}api/technician/".format(request.url_root))
+            get_technicians_resp = requests.get("{}api/technician/?pagination_no={}".format(request.url_root, pagination_no))
 
             if get_technicians_resp.ok:
                 return json.loads(get_technicians_resp.text)
@@ -37,9 +37,8 @@ class TechnicianService:
     def edit(data):
         try:
             edit_technician_resp = requests.patch(
-                "{}api/technician/".format(request.url_root),
+                "{}api/technician/{}".format(request.url_root, data.form.get("edttc_id_input")),
                 json= dict(
-                    id = data.form.get("edttc_id_input"),
                     name = data.form.get("edttc_name_input")
                 )
             )
@@ -56,9 +55,8 @@ class TechnicianService:
     def delete(data):
         try:
             delete_technician_resp = requests.delete(
-                "{}api/technician/".format(request.url_root),
+                "{}api/technician/{}".format(request.url_root, data.form.get("delttc_id_input")),
                 json= dict(
-                    id = data.form.get("delttc_id_input"),
                     name = data.form.get("delttc_name_input")
                 )
             )

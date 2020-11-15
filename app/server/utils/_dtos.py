@@ -52,7 +52,8 @@ class OfficeDto:
 
     office = api.model("office", {
         "id": fields.String(),
-        "name": fields.String(required=True, pattern=hasText_pattern)
+        "name": fields.String(required=True, pattern=hasText_pattern),
+        "total_requests": fields.Integer()
     })
 
 class ModeDto:
@@ -72,7 +73,8 @@ class NatureDto:
 
     nature = api.model("nature", {
         "id": fields.String(),
-        "name": fields.String(required=True, pattern=hasText_pattern)
+        "name": fields.String(required=True, pattern=hasText_pattern),
+        "total_requests": fields.Integer()
     })
 
 class TechnicianDto:

@@ -9,6 +9,6 @@ def dashboard():
     return render_template("dashboard.html",
         page_title = "Dashboard",
         current_date = "{}".format(datetime.datetime.utcnow().strftime("%B %d, %Y")),
-        request_count = len(RequestService.get_all()["requests"]),
-        technician_count = len(TechnicianService.get_all()["technicians"])
+        request_count = 2,
+        technician_count = 2
     )
