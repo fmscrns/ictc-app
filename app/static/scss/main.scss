@@ -16,10 +16,6 @@ ul {
 }​
 
 // MAINFRAME SIDEBAR
-#ictc-st-mf > .row > .mf-sb {
-    
-}
-
 #ictc-st-mf > .row > .mf-sb > .position-fixed {
     z-index: 10;
 }
@@ -173,13 +169,15 @@ $ct-series-colors: (
         #a748ca
 ) !default;
 
-.cs-sro-l {
+.cs-sro-l,
+.cs-tsp-l {
     height: 30px;
 }
 
-.cs-sro-l > .ct-legend {
+.cs-sro-l > .ct-legend,
+.cs-tsp-l > .ct-legend {
     position: relative;
-    z-index: 10;
+    z-index: 1;
     list-style-type: none;
 
     li {
@@ -218,7 +216,8 @@ $ct-series-colors: (
     }
 }
 
-.cs-sro-d {
+.cs-sro-d,
+.cs-tsp-d {
     margin-left: -35px;
 }
 

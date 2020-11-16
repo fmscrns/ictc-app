@@ -11,8 +11,9 @@ class TechnicianList(Resource):
     @api.marshal_list_with(_technician, envelope="technicians")
     def get(self):
         pagination_no = request.args.get("pagination_no", 1, int)
+        order_command = request.args.get("order_command", None, str)
 
-        get_technicians = TechnicianService.get_all(pagination_no)
+        get_technicians = TechnicianService.get_all(pagination_no) if order_command == None else TechnicianService.get_all_w_totreq(pagination_no, order_command)
 
         if not isinstance(get_technicians, int):
             return get_technicians

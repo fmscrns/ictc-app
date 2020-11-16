@@ -2,7 +2,7 @@ import uuid, datetime
 from sqlalchemy import func, asc, desc
 from sqlalchemy.orm import exc
 from ... import db
-from ..models import RequestModel, NatureModel, OfficeModel
+from ..models import RequestModel, NatureModel, OfficeModel, RepairModel
 
 class NatureService:
     # @staticmethod
@@ -132,6 +132,53 @@ class NatureService:
                     NatureModel
                 ).filter(
                     RequestModel.office_client_id == office_id
+                ).order_by(
+                    *[order_config[order_command]]
+                ).paginate(
+                    page=pagination_no,
+                    per_page=3
+                ).items
+            ]
+
+            return natures if natures else 404
+
+        except exc.NoResultFound:
+            return 404
+
+        except KeyError:
+            return 400
+
+        else:
+            return 500
+
+    @staticmethod
+    def get_by_technician(technician_id, pagination_no, order_command):
+        try:
+            order_config = dict(
+                NAME_ASC = NatureModel.name.asc(), 
+                NAME_DESC = NatureModel.name.desc(),
+                TOTREQ_ASC = asc("total_requests"),
+                TOTREQ_DESC = desc("total_requests"),
+                REGON_ASC = NatureModel.registered_on.asc(),
+                REGON_DESC = NatureModel.registered_on.desc()
+            )
+
+            natures = [
+                dict(
+                    id = nature[0],
+                    name = nature[1],
+                    total_requests = nature[2]
+                ) for nature in db.session.query(
+                    NatureModel.public_id,
+                    NatureModel.name,
+                    func.count(RequestModel.nature_type_id).label("total_requests")
+                ).join(
+                    RequestModel
+                ).group_by(
+                    NatureModel
+                ).filter(
+                    RepairModel.technician_fixer_id == technician_id,
+                    RepairModel.request_task_id == RequestModel.public_id
                 ).order_by(
                     *[order_config[order_command]]
                 ).paginate(

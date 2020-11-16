@@ -49,6 +49,21 @@ class NatureListByOffice(Resource):
 
         api.abort(get_natures)
 
+@api.route("/technician/<technician_id>")
+@api.param("technician_id", "The Technician identifier")
+class NatureListByTechnician(Resource):
+    @api.marshal_list_with(_nature, envelope="natures")
+    def get(self, technician_id):
+        pagination_no = request.args.get("pagination_no", 1, int)
+        order_command = request.args.get("order_command", "NAME_ASC", str)
+
+        get_natures = NatureService.get_by_technician(technician_id, pagination_no, order_command)
+
+        if not isinstance(get_natures, int):
+            return get_natures
+
+        api.abort(get_natures)
+
 @api.route("/<id>")
 @api.param("id", "The Nature identifier")
 class Nature(Resource):

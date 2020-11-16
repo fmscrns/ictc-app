@@ -84,5 +84,6 @@ class TechnicianDto:
 
     technician = api.model("technician", {
         "id": fields.String(),
-        "name": fields.String(required=True, pattern=hasText_pattern)
+        "name": fields.String(required=True, pattern=hasText_pattern),
+        "total_requests": fields.Integer()
     })

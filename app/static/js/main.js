@@ -293,29 +293,193 @@ document.querySelectorAll(".cs-sro").forEach((card) => {
 });
 
 document.querySelectorAll(".cs-tsp").forEach((card) => {
-    const chart = card.querySelector(".cs-tsp-d");
+    const display = card.querySelector(".cs-tsp-d");
+    var containerHeight = $(display).parent().outerHeight();
+    display.style.height = containerHeight + 'px';
 
-    var data = {
-        labels: ["Gino Mascariñas", "Jonas Serino", "Chuckie Razuman", "Chad Mascariñas"],
-        
-        series: [
-            [5, 4, 3, 7],
-            [3, 2, 9, 5],
-            [1, 9, 100, 5],
-            [4, 6, 4, 4],
-        ]
-    }
+    const legendCont = document.querySelector(".cs-tsp-l");
+
+    const traverserCont = card.querySelector(".btn-group");
+    const leftTraverser = traverserCont.firstElementChild;
+    const rightTraverser = traverserCont.lastElementChild;
+
+    var technicianPaginateNo = 1;
+
+    var data = {};
+    data.labels = [];
+    data.series = [];
 
     var options = {
-        seriesBarDistance: 10,
-        reverseData: true,
-        horizontalBars: true,
+        high: 0,
+        width: '725px',
+        height: containerHeight + 'px',
         axisY: {
             offset: 75
+        },
+        plugins: [
+            Chartist.plugins.legend({
+                position: legendCont,
+                clickable: false
+            })
+        ]
+    }
+    
+    readyDisplay("TOTREQ_DESC", technicianPaginateNo);
+    populateNatureSeriesAjax();
+
+    leftTraverser.addEventListener("click", () => {
+        technicianPaginateNo--;
+
+        readyDisplay("TOTREQ_DESC", technicianPaginateNo);
+
+        getTechnicianListAjax("TOTREQ_DESC", technicianPaginateNo);
+    });
+
+    rightTraverser.addEventListener("click", () => {
+        technicianPaginateNo++;
+
+        readyDisplay("TOTREQ_DESC", technicianPaginateNo);
+
+        getTechnicianListAjax("TOTREQ_DESC", technicianPaginateNo);
+    });
+
+    function readyDisplay (orderCommand="TOTREQ_DESC", paginate=1) {
+        if (paginate > 1) {
+            leftTraverser.disabled = false;
+
+        } else {
+            leftTraverser.disabled = true;
         }
+
+        $.ajax({
+            method: "GET",
+
+            url: "api/technician/?order_command=" + orderCommand + "&pagination_no=" + (paginate + 1),
+
+            success: function () {
+                rightTraverser.disabled = false;
+            },
+
+            error: function () {
+                rightTraverser.disabled = true;
+            }
+        });
     }
 
-    new Chartist.Bar(chart, data, options);
+    function populateNatureSeriesAjax (paginate=1) {
+        $.ajax({
+            method: "GET",
+
+            url: "api/nature/?pagination_no=" + paginate,
+
+            success: function (response) {
+                for (let nature of response["natures"]) {
+                    let natureObj = {};
+                    natureObj["name"] = nature["name"];
+                    natureObj["data"] = [];
+
+                    data.series.push(natureObj);
+                }
+
+                populateNatureSeriesAjax(paginate + 1);
+            },
+
+            error: function () {
+                if (data.series.length !== 0) {
+                    getTechnicianListAjax("TOTREQ_DESC", technicianPaginateNo);
+                }
+            }
+        });
+    }
+
+    function getTechnicianListAjax (orderCommand="TOTREQ_DESC", paginate) {
+        $.ajax({
+            method: "GET",
+
+            url: "api/technician/?order_command=" + orderCommand + "&pagination_no=" + paginate,
+
+            success: function (response) {
+                let technicians = response["technicians"];
+
+                let i;
+                for (i=0; i < technicians.length; i++) {
+                    data.labels[i] = technicians[i]["name"];
+
+                    for (let obj of data.series) {
+                        obj["data"][i] = 0;
+                    }
+
+                    countNatureByTechnicianRequests(technicians[i]["id"], i);
+                }
+            }
+        });
+    }
+
+    var activeAjaxConnection = 0;
+    function countNatureByTechnicianRequests (technicianId, index, orderCommand="TOTREQ_DESC", paginate=1) {
+        $.ajax({
+            method: "GET",
+
+            beforeSend: function () {
+                activeAjaxConnection++;
+            },
+
+            url: "api/nature/technician/" + technicianId + "?order_command=" + orderCommand + "&pagination_no=" + paginate,
+
+            success: function (response) {
+                activeAjaxConnection--;
+
+                for (let nature of response["natures"]) {
+                    for (let obj of data.series) {
+                        if (obj["name"] === nature["name"]) {
+                            obj["data"][index] = nature["total_requests"];
+                        }
+
+                        if (options["high"] < nature["total_requests"]) {
+                            options["high"] = nature["total_requests"];
+                        }
+                    }
+                }
+
+                countNatureByTechnicianRequests(technicianId, index, orderCommand, paginate+1);
+
+                if (activeAjaxConnection === 0) {
+                    setChart();
+                }
+            },
+
+            error: function () {
+                activeAjaxConnection--;
+
+                if (activeAjaxConnection === 0) {
+                    setChart();
+                }
+            }
+        });
+    }
+
+    var legendContFirstInvoke = false;
+    function setChart () {
+        if (legendContFirstInvoke === true) {
+            options["plugins"] = [];
+        }
+
+        legendContFirstInvoke = true;
+
+        let chart = new Chartist.Bar(display, data, options);
+
+        chart.on('draw', function(data) {
+            if(data.type == 'bar') {
+                data.element.animate({
+                    y2: {
+                        dur: '0.2s',
+                        from: data.y1,
+                        to: data.y2
+                    }
+                });
+            }
+        });
+    }
 });
 
 document.querySelectorAll(".cs-rs").forEach((card) => {
